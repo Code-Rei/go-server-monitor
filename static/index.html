@@ -718,6 +718,259 @@
         opacity: 1;
       }
     }
+
+    /* ═════════════════════════════════════════════
+       SQL SERVER PANEL
+    ═════════════════════════════════════════════ */
+    .sql-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 24px 0 12px;
+    }
+
+    .sql-section-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sql-section-title::after {
+      content: '';
+      width: 60px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .sql-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      transition: all 0.4s;
+    }
+
+    .sql-status-badge.connected {
+      background: rgba(0, 229, 160, 0.1);
+      border: 1px solid rgba(0, 229, 160, 0.3);
+      color: var(--accent-green);
+    }
+
+    .sql-status-badge.disconnected {
+      background: rgba(255, 77, 109, 0.1);
+      border: 1px solid rgba(255, 77, 109, 0.3);
+      color: var(--accent-red);
+    }
+
+    .sql-status-badge.unconfigured {
+      background: rgba(61, 80, 112, 0.2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .sql-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .sql-status-badge.connected .sql-status-dot {
+      box-shadow: 0 0 6px var(--accent-green);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    /* KPI grid — 5 columns */
+    .grid-sql-kpi {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 1100px) { .grid-sql-kpi { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px)  { .grid-sql-kpi { grid-template-columns: repeat(2, 1fr); } }
+
+    .sql-kpi {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px) saturate(160%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+    }
+
+    .sql-kpi:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 30px rgba(59, 158, 255, 0.07), 0 8px 32px rgba(0,0,0,0.3);
+      transform: translateY(-2px);
+    }
+
+    .sql-kpi::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+      background: var(--kpi-accent, linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)));
+      opacity: 0.7;
+    }
+
+    .sql-kpi-label {
+      font-size: 0.63rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .sql-kpi-value {
+      font-family: var(--font-mono);
+      font-size: 1.7rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.5px;
+      color: var(--kpi-color, var(--accent-blue));
+      text-shadow: 0 0 16px rgba(var(--kpi-glow, 59, 158, 255), 0.25);
+      transition: color 0.5s;
+    }
+
+    .sql-kpi-unit {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-left: 2px;
+    }
+
+    .sql-kpi-sub {
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+      margin-top: 5px;
+      font-family: var(--font-mono);
+    }
+
+    .sql-kpi-gauge {
+      margin-top: 10px;
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .sql-kpi-gauge-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: var(--kpi-accent, linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)));
+      transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 6px rgba(var(--kpi-glow, 59, 158, 255), 0.5);
+    }
+
+    /* PLE colour coding */
+    .ple-good    { color: var(--accent-green) !important; --kpi-glow: 0,229,160; }
+    .ple-warn    { color: var(--accent-yellow) !important; --kpi-glow: 255,209,102; }
+    .ple-critical{ color: var(--accent-red) !important; --kpi-glow: 255,77,109; }
+
+    /* Bottom row: memory breakdown + PLE sparkline */
+    .grid-sql-detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) { .grid-sql-detail { grid-template-columns: 1fr; } }
+
+    /* Stacked memory breakdown bar */
+    .mem-breakdown-wrap {
+      margin-top: 4px;
+    }
+
+    .mem-breakdown-bar {
+      display: flex;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .mem-seg {
+      height: 100%;
+      transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .mem-seg-buf  { background: linear-gradient(90deg, #3b9eff, #00d4ff); }
+    .mem-seg-plan { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+    .mem-seg-other{ background: linear-gradient(90deg, #fb923c, #f59e0b); }
+
+    .mem-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .mem-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+    }
+
+    .mem-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .mem-legend-val {
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Not-configured overlay */
+    #sql-unconfigured {
+      display: none;
+      text-align: center;
+      padding: 32px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    #sql-unconfigured .sql-nc-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      opacity: 0.4;
+    }
+
+    #sql-unconfigured code {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: rgba(59, 158, 255, 0.06);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+      color: var(--accent-cyan);
+      line-height: 1.6;
+    }
   </style>
 </head>
 
@@ -950,6 +1203,174 @@
       </div>
 
     </div><!-- /grid-bottom -->
+
+    <!-- ══════════════════════ SQL SERVER ══════════════════════ -->
+    <div class="sql-section-header">
+      <div class="sql-section-title">🗄️ SQL Server Analytics</div>
+      <span class="sql-status-badge unconfigured" id="sql-status-badge">
+        <span class="sql-status-dot"></span>
+        <span id="sql-status-text">Checking…</span>
+      </span>
+    </div>
+
+    <div id="sql-unconfigured">
+      <div class="sql-nc-icon">🗄️</div>
+      <div>SQL Server monitoring is not configured.</div>
+      <code>set SQL_HOST=your-server
+set SQL_USER=your-login
+set SQL_PASS=your-password
+set SQL_DB=master</code>
+    </div>
+
+    <div id="sql-panel">
+
+      <!-- KPI row -->
+      <div class="grid-sql-kpi">
+
+        <!-- Committed Memory -->
+        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#3b9eff,#00d4ff);--kpi-color:#3b9eff;--kpi-glow:59,158,255">
+          <div class="sql-kpi-label">🧠 Committed</div>
+          <div class="sql-kpi-value" id="sql-committed">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-committed-sub">of — MB target</div>
+          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-committed-gauge" style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div></div>
+        </div>
+
+        <!-- Buffer Pool -->
+        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#00d4ff,#0088cc);--kpi-color:#00d4ff;--kpi-glow:0,212,255">
+          <div class="sql-kpi-label">📦 Buffer Pool</div>
+          <div class="sql-kpi-value" id="sql-bufpool">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-bufpool-sub">—% of committed</div>
+          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-bufpool-gauge" style="width:0%;background:linear-gradient(90deg,#00d4ff,#0088cc)"></div></div>
+        </div>
+
+        <!-- Plan Cache -->
+        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#a78bfa,#7c3aed);--kpi-color:#a78bfa;--kpi-glow:167,139,250">
+          <div class="sql-kpi-label">📋 Plan Cache</div>
+          <div class="sql-kpi-value" id="sql-plancache">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-plancache-sub">compiled plans</div>
+          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-plancache-gauge" style="width:0%;background:linear-gradient(90deg,#a78bfa,#7c3aed)"></div></div>
+        </div>
+
+        <!-- Batch Requests/sec -->
+        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#fb923c,#f59e0b);--kpi-color:#fb923c;--kpi-glow:251,146,60">
+          <div class="sql-kpi-label">⚡ Batch Req/s</div>
+          <div class="sql-kpi-value" id="sql-batchreq">—<span class="sql-kpi-unit">/s</span></div>
+          <div class="sql-kpi-sub" id="sql-conns-sub">— active sessions</div>
+        </div>
+
+        <!-- Page Life Expectancy -->
+        <div class="sql-kpi" id="sql-ple-card" style="--kpi-accent:linear-gradient(90deg,#00e5a0,#00b377);--kpi-color:#00e5a0;--kpi-glow:0,229,160">
+          <div class="sql-kpi-label">⏱ Page Life Exp.</div>
+          <div class="sql-kpi-value" id="sql-ple">—<span class="sql-kpi-unit">s</span></div>
+          <div class="sql-kpi-sub" id="sql-ple-sub">🟢 Healthy</div>
+          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-ple-gauge" style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div></div>
+        </div>
+
+      </div><!-- /grid-sql-kpi -->
+
+      <!-- Detail row: memory breakdown + PLE trend -->
+      <div class="grid-sql-detail">
+
+        <!-- Stacked memory breakdown -->
+        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#3b9eff,#a78bfa)">
+          <div class="section-title">🧠 Memory Distribution</div>
+          <div class="mem-breakdown-wrap">
+            <div class="mem-breakdown-bar">
+              <div class="mem-seg mem-seg-buf"  id="sql-seg-buf"  style="width:0%" title="Buffer Pool"></div>
+              <div class="mem-seg mem-seg-plan" id="sql-seg-plan" style="width:0%" title="Plan Cache"></div>
+              <div class="mem-seg mem-seg-other"id="sql-seg-other"style="width:0%" title="Other"></div>
+            </div>
+            <div class="mem-legend">
+              <div class="mem-legend-item">
+                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#3b9eff,#00d4ff)"></div>
+                Buffer Pool &nbsp;<span class="mem-legend-val" id="sql-leg-buf">—</span>
+              </div>
+              <div class="mem-legend-item">
+                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)"></div>
+                Plan Cache &nbsp;<span class="mem-legend-val" id="sql-leg-plan">—</span>
+              </div>
+              <div class="mem-legend-item">
+                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#fb923c,#f59e0b)"></div>
+                Other &nbsp;<span class="mem-legend-val" id="sql-leg-other">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Committed vs Target detail rows -->
+          <div style="margin-top:18px">
+            <div class="disk-row">
+              <div class="disk-header">
+                <span class="disk-name">📦 Committed Memory</span>
+                <span class="disk-pct" id="sql-committed-pct2" style="color:var(--accent-blue)">—%</span>
+              </div>
+              <div class="disk-bar">
+                <div class="disk-bar-fill" id="sql-committed-bar2" style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div>
+              </div>
+              <div class="disk-details">
+                <span id="sql-committed-used2">—</span>
+                <span></span>
+                <span id="sql-committed-target2">—</span>
+              </div>
+            </div>
+
+            <div class="disk-row">
+              <div class="disk-header">
+                <span class="disk-name">📁 Buffer Pool</span>
+                <span class="disk-pct" id="sql-bufpool-pct2" style="color:var(--accent-cyan)">—%</span>
+              </div>
+              <div class="disk-bar">
+                <div class="disk-bar-fill" id="sql-bufpool-bar2" style="width:0%;background:linear-gradient(90deg,#00d4ff,#0088cc)"></div>
+              </div>
+              <div class="disk-details">
+                <span id="sql-bufpool-used2">—</span>
+                <span></span>
+                <span id="sql-bufpool-of2">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLE sparkline trend -->
+        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#00e5a0,#00b377)">
+          <div class="section-title">⏱ Page Life Expectancy Trend</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div>
+              <span style="font-family:var(--font-mono);font-size:1.8rem;font-weight:700" id="sql-ple-big">—</span>
+              <span style="color:var(--text-secondary);font-size:0.85rem"> seconds</span>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:0.68rem;color:var(--text-muted)">Threshold</div>
+              <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--accent-green)">&gt; 300s good</div>
+            </div>
+          </div>
+
+          <!-- PLE threshold guidelines -->
+          <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+            <span style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);color:var(--accent-green)">🟢 &ge;300s Healthy</span>
+            <span style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(255,209,102,0.1);border:1px solid rgba(255,209,102,0.2);color:var(--accent-yellow)">🟡 100–300s Warn</span>
+            <span style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.2);color:var(--accent-red)">🔴 &lt;100s Critical</span>
+          </div>
+
+          <div style="height:80px">
+            <canvas id="spark-ple" style="width:100%;height:100%"></canvas>
+          </div>
+
+          <!-- Active connections & batch row -->
+          <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
+            <div style="flex:1;min-width:100px;background:rgba(59,158,255,0.05);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+              <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px">🔌 Active Sessions</div>
+              <div style="font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:var(--accent-blue)" id="sql-conns-big">—</div>
+            </div>
+            <div style="flex:1;min-width:100px;background:rgba(251,146,60,0.05);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+              <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px">⚡ Batch Req/s</div>
+              <div style="font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:var(--accent-orange)" id="sql-batch-big">—</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /grid-sql-detail -->
+
+    </div><!-- /sql-panel -->
 
   </div><!-- /wrapper -->
 
@@ -1326,11 +1747,14 @@
       }
     }
 
-    // ── Boot ─────────────────────────────────────────────────
+    // ── Boot ──────────────────────────────────────────────────
     window.addEventListener('load', () => {
       initSparks();
       fetchMetrics();
       setInterval(fetchMetrics, 5000);
+      // SQL metrics poll (independent, same interval)
+      fetchSQLDashboard();
+      setInterval(fetchSQLDashboard, 5000);
     });
 
     window.addEventListener('resize', () => {
@@ -1340,7 +1764,134 @@
       drawSparkline(sparks.disk.canvas, sparks.disk.data, '#fb923c', '#f59e0b', 100);
       drawSparkline(sparks.temp.canvas, sparks.temp.data, '#00e5a0', '#00b377', 100);
       drawNetSparkline(sparks.net.canvas, sparks.net.rxData, sparks.net.txData);
+      if (sparks.ple.canvas) drawSparkline(sparks.ple.canvas, sparks.ple.data, '#00e5a0', '#00b377');
     });
+
+    // ── SQL Server dashboard ───────────────────────────────────
+    sparks.ple = { canvas: null, data: [] };
+
+    function initSQLSparks() {
+      sparks.ple.canvas = document.getElementById('spark-ple');
+    }
+
+    function renderSQL(d) {
+      const badge     = document.getElementById('sql-status-badge');
+      const statusTxt = document.getElementById('sql-status-text');
+      const panel     = document.getElementById('sql-panel');
+      const nc        = document.getElementById('sql-unconfigured');
+
+      // Not configured state
+      if (!d.configured) {
+        badge.className = 'sql-status-badge unconfigured';
+        statusTxt.textContent = 'Not Configured';
+        panel.style.display = 'none';
+        nc.style.display = 'block';
+        return;
+      }
+
+      nc.style.display = 'none';
+      panel.style.display = 'block';
+
+      // Connection badge
+      if (d.connected) {
+        badge.className = 'sql-status-badge connected';
+        statusTxt.textContent = 'Connected';
+      } else {
+        badge.className = 'sql-status-badge disconnected';
+        statusTxt.textContent = d.error ? 'Error' : 'Disconnected';
+      }
+
+      // KPI: Committed
+      setText('sql-committed',    d.currentCommittedMB);
+      setText('sql-committed-sub', `of ${d.targetCommittedMB} MB target`);
+      document.getElementById('sql-committed-gauge').style.width = Math.min(d.committedPct, 100) + '%';
+
+      // KPI: Buffer Pool
+      setText('sql-bufpool',     d.bufferPoolMB);
+      setText('sql-bufpool-sub', d.bufferPoolPct + '% of committed');
+      document.getElementById('sql-bufpool-gauge').style.width = Math.min(d.bufferPoolPct, 100) + '%';
+
+      // KPI: Plan Cache
+      setText('sql-plancache',     d.planCacheMB);
+      const planPct = d.currentCommittedMB > 0 ? ((d.planCacheMB / d.currentCommittedMB) * 100).toFixed(1) : 0;
+      setText('sql-plancache-sub', planPct + '% of committed');
+      document.getElementById('sql-plancache-gauge').style.width = Math.min(planPct, 100) + '%';
+
+      // KPI: Batch/sec
+      setText('sql-batchreq',   d.batchRequestsPerSec.toFixed(1));
+      setText('sql-conns-sub',  `${d.activeConnections} active sessions`);
+
+      // KPI: PLE
+      const pleEl  = document.getElementById('sql-ple');
+      const pleSub = document.getElementById('sql-ple-sub');
+      const pleGauge = document.getElementById('sql-ple-gauge');
+      setText('sql-ple', d.pageLifeExpectancy);
+      setText('sql-ple-big', d.pageLifeExpectancy);
+
+      const pleColors = { good: '#00e5a0', warn: '#ffd166', critical: '#ff4d6d' };
+      const pleLabels = { good: '🟢 Healthy', warn: '🟡 Marginal', critical: '🔴 Critical — add RAM!' };
+      const pleGlows  = { good: '0,229,160', warn: '255,209,102', critical: '255,77,109' };
+      const pleBg     = { good: 'linear-gradient(90deg,#00e5a0,#00b377)', warn: 'linear-gradient(90deg,#ffd166,#f59e0b)', critical: 'linear-gradient(90deg,#ff4d6d,#cc0033)' };
+
+      const st = d.pleStatus || 'good';
+      pleEl.style.color = pleColors[st];
+      pleEl.style.textShadow = `0 0 16px rgba(${pleGlows[st]},0.4)`;
+      if (pleSub) pleSub.textContent = pleLabels[st];
+      if (pleGauge) {
+        // PLE gauge: scale 0-1200s (20 min) as 100%
+        const plePct = Math.min((d.pageLifeExpectancy / 1200) * 100, 100);
+        pleGauge.style.width = plePct + '%';
+        pleGauge.style.background = pleBg[st];
+      }
+      // big PLE colour
+      const pleBigEl = document.getElementById('sql-ple-big');
+      if (pleBigEl) { pleBigEl.style.color = pleColors[st]; }
+
+      // Memory breakdown stacked bar
+      const total = d.currentCommittedMB || 1;
+      const bufPct   = Math.min((d.bufferPoolMB / total) * 100, 100);
+      const planPct2 = Math.min((d.planCacheMB  / total) * 100, 100);
+      const othPct   = Math.max(0, Math.min(100 - bufPct - planPct2, 100));
+
+      document.getElementById('sql-seg-buf').style.width   = bufPct + '%';
+      document.getElementById('sql-seg-plan').style.width  = planPct2 + '%';
+      document.getElementById('sql-seg-other').style.width = othPct + '%';
+
+      setText('sql-leg-buf',   d.bufferPoolMB + ' MB');
+      setText('sql-leg-plan',  d.planCacheMB  + ' MB');
+      setText('sql-leg-other', d.otherMemoryMB + ' MB');
+
+      // Committed detail rows
+      setText('sql-committed-pct2',    d.committedPct + '%', false);
+      document.getElementById('sql-committed-bar2').style.width = Math.min(d.committedPct, 100) + '%';
+      setText('sql-committed-used2',   `Used: ${d.currentCommittedMB} MB`, false);
+      setText('sql-committed-target2', `Target: ${d.targetCommittedMB} MB`, false);
+
+      setText('sql-bufpool-pct2',   d.bufferPoolPct + '%', false);
+      document.getElementById('sql-bufpool-bar2').style.width = Math.min(d.bufferPoolPct, 100) + '%';
+      setText('sql-bufpool-used2', `${d.bufferPoolMB} MB`, false);
+      setText('sql-bufpool-of2',   `of ${d.currentCommittedMB} MB`, false);
+
+      // Active connections & batch big displays
+      setText('sql-conns-big', d.activeConnections);
+      setText('sql-batch-big', d.batchRequestsPerSec.toFixed(1));
+
+      // PLE sparkline
+      if (!sparks.ple.canvas) initSQLSparks();
+      pushSpark(sparks.ple.data, d.pageLifeExpectancy);
+      drawSparkline(sparks.ple.canvas, sparks.ple.data, pleColors[st], pleColors[st]);
+    }
+
+    async function fetchSQLDashboard() {
+      try {
+        const res = await fetch('/metrics/sql');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const d = await res.json();
+        renderSQL(d);
+      } catch (e) {
+        console.warn('SQL metrics fetch error:', e);
+      }
+    }
   </script>
 </body>
 

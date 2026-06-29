@@ -421,6 +421,9 @@ func main() {
 	// Seed network baseline
 	initNetwork()
 
+	// Connect to SQL Server (no-op if env vars not set)
+	initSQL()
+
 	// Serve embedded static files at /
 	staticSub, err := fs.Sub(staticFS, "static")
 	if err != nil {
@@ -444,13 +447,19 @@ func main() {
 		jsonHandler(w, r, m)
 	})
 
+	// GET /metrics/sql  →  SQL Server memory & perf metrics
+	mux.HandleFunc("/metrics/sql", func(w http.ResponseWriter, r *http.Request) {
+		jsonHandler(w, r, fetchSQLMetrics())
+	})
+
 	// GET /  →  dashboard (embedded static files)
 	mux.Handle("/", http.FileServer(http.FS(staticSub)))
 
 	log.Printf("\n🖥️  Server Monitor (Go) running")
 	log.Printf("   ➜  Dashboard : http://localhost%s/", listenAddr)
 	log.Printf("   ➜  Metrics   : http://localhost%s/metrics", listenAddr)
-	log.Printf("   ➜  Full      : http://localhost%s/metrics/full\n", listenAddr)
+	log.Printf("   ➜  Full      : http://localhost%s/metrics/full", listenAddr)
+	log.Printf("   ➜  SQL       : http://localhost%s/metrics/sql\n", listenAddr)
 
 	if err := http.ListenAndServe(listenAddr, mux); err != nil {
 		log.Fatalf("server error: %v", err)
