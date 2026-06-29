@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Server Monitor — Live Dashboard</title>
+  <meta name="description"
+    content="Real-time Windows server monitoring dashboard tracking CPU, RAM, disk, network, temperature and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════════ */
+    :root {
+      --bg-base: #090d14;
+      --bg-card: rgba(15, 22, 36, 0.85);
+      --bg-card-hov: rgba(20, 30, 50, 0.95);
+      --border: rgba(99, 179, 237, 0.12);
+      --border-glow: rgba(99, 179, 237, 0.35);
+
+      --text-primary: #e2eaf7;
+      --text-secondary: #7a90b0;
+      --text-muted: #3d5070;
+
+      --accent-blue: #3b9eff;
+      --accent-cyan: #00d4ff;
+      --accent-green: #00e5a0;
+      --accent-yellow: #ffd166;
+      --accent-red: #ff4d6d;
+      --accent-purple: #a78bfa;
+      --accent-orange: #fb923c;
+
+      --radius-card: 16px;
+      --radius-sm: 8px;
+      --font: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59, 158, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 158, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* radial glow blobs */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 15% 10%, rgba(59, 158, 255, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 35% at 85% 85%, rgba(0, 212, 255, 0.05) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(167, 139, 250, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ═══════════════════════════════════════════════
+       LAYOUT WRAPPER
+    ═══════════════════════════════════════════════ */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════════ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(9, 13, 20, 0.8);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green), 0 0 20px rgba(0, 229, 160, 0.4);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        box-shadow: 0 0 8px var(--accent-green), 0 0 20px rgba(0, 229, 160, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 14px var(--accent-green), 0 0 30px rgba(0, 229, 160, 0.6);
+      }
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hostname-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      background: rgba(59, 158, 255, 0.08);
+      border: 1px solid rgba(59, 158, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .refresh-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .refresh-ring {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--text-muted);
+      border-top-color: var(--accent-blue);
+      animation: spin 5s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .refresh-ring.spinning {
+      animation-play-state: running;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .last-updated {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════
+       ALERT BANNER
+    ═══════════════════════════════════════════════ */
+    #alert-banner {
+      display: none;
+      margin: 16px 0 0;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 77, 109, 0.12);
+      border: 1px solid rgba(255, 77, 109, 0.35);
+      color: #ff8fa3;
+      font-size: 0.82rem;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ═══════════════════════════════════════════════
+       SYSTEM INFO BAR
+    ═══════════════════════════════════════════════ */
+    .sysinfo-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 20px 0 8px;
+    }
+
+    .sysinfo-pill {
+      font-size: 0.71rem;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      background: rgba(59, 158, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    /* ═══════════════════════════════════════════════
+       GRID LAYOUTS
+    ═══════════════════════════════════════════════ */
+    .grid-top {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .grid-mid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .grid-bottom {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 1100px) {
+      .grid-top {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid-bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid-top {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-mid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════
+       CARD BASE
+    ═══════════════════════════════════════════════ */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 30px rgba(59, 158, 255, 0.07), 0 8px 32px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* top accent line */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+      background: var(--card-accent, linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)));
+      opacity: 0.7;
+    }
+
+    /* ═══════════════════════════════════════════════
+       METRIC CARD (top row)
+    ═══════════════════════════════════════════════ */
+    .metric-card {
+      --card-accent: linear-gradient(90deg, var(--c1), var(--c2));
+    }
+
+    .metric-card .card-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-card .card-label .icon {
+      font-size: 0.9rem;
+    }
+
+    .metric-card .big-value {
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -1px;
+      font-family: var(--font-mono);
+      color: var(--c1, var(--text-primary));
+      text-shadow: 0 0 20px rgba(var(--glow-rgb, 59, 158, 255), 0.3);
+      transition: color 0.5s;
+    }
+
+    .metric-card .unit {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-left: 2px;
+    }
+
+    .metric-card .sub-value {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      font-family: var(--font-mono);
+    }
+
+    /* arc gauge */
+    .gauge-wrap {
+      margin-top: 14px;
+      position: relative;
+    }
+
+    .gauge-track {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .gauge-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--c1), var(--c2));
+      transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 8px rgba(var(--glow-rgb, 59, 158, 255), 0.5);
+    }
+
+    /* ═══════════════════════════════════════════════
+       SPARKLINE (mini chart)
+    ═══════════════════════════════════════════════ */
+    .sparkline-wrap {
+      margin-top: 10px;
+      height: 36px;
+    }
+
+    .sparkline-wrap canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SECTION HEADING
+    ═══════════════════════════════════════════════ */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ═══════════════════════════════════════════════
+       CPU CORES GRID
+    ═══════════════════════════════════════════════ */
+    #cores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .core-cell {
+      text-align: center;
+      background: rgba(59, 158, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 4px;
+      transition: border-color 0.3s;
+    }
+
+    .core-cell:hover {
+      border-color: var(--border-glow);
+    }
+
+    .core-label {
+      font-size: 0.58rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .core-pct {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+    }
+
+    .core-bar {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .core-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+      transition: width 0.6s ease;
+    }
+
+    /* ═══════════════════════════════════════════════
+       NETWORK CARD
+    ═══════════════════════════════════════════════ */
+    .net-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .net-row:last-child {
+      border-bottom: none;
+    }
+
+    .net-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .net-arrow {
+      font-size: 1rem;
+    }
+
+    .net-val {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .net-val.rx {
+      color: var(--accent-green);
+    }
+
+    .net-val.tx {
+      color: var(--accent-blue);
+    }
+
+    .net-total {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       DISK / SWAP ROW
+    ═══════════════════════════════════════════════ */
+    .disk-row {
+      margin-bottom: 16px;
+    }
+
+    .disk-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .disk-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .disk-name {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .disk-pct {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .disk-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .disk-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .disk-details {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* ═══════════════════════════════════════════════
+       UPTIME & PROCESS CARD
+    ═══════════════════════════════════════════════ */
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-key {
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-val {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* ═══════════════════════════════════════════════
+       STATUS INDICATOR
+    ═══════════════════════════════════════════════ */
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green);
+    }
+
+    /* ═══════════════════════════════════════════════
+       ERROR OVERLAY
+    ═══════════════════════════════════════════════ */
+    #error-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 13, 20, 0.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #error-overlay.show {
+      display: flex;
+    }
+
+    .error-box {
+      background: rgba(255, 77, 109, 0.1);
+      border: 1px solid rgba(255, 77, 109, 0.4);
+      border-radius: var(--radius-card);
+      padding: 32px 40px;
+      text-align: center;
+      max-width: 380px;
+    }
+
+    .error-box h2 {
+      color: var(--accent-red);
+      margin-bottom: 10px;
+    }
+
+    .error-box p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SKELETON LOADER
+    ═══════════════════════════════════════════════ */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════
+       TRANSITIONS
+    ═══════════════════════════════════════════════ */
+    .fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .value-flash {
+      animation: valueFlash 0.4s ease;
+    }
+
+    @keyframes valueFlash {
+      0% {
+        opacity: 0.4;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════ HEADER ══════════════════════ -->
+  <header>
+    <div class="header-left">
+      <span class="logo-dot" id="live-dot"></span>
+      <span class="logo-text">ServerMonitor</span>
+    </div>
+    <div class="header-right">
+      <span class="hostname-badge" id="header-hostname">—</span>
+      <div class="refresh-info">
+        <div class="refresh-ring" id="refresh-ring"></div>
+        <span>5s refresh</span>
+      </div>
+      <span class="last-updated" id="last-updated">–</span>
+    </div>
+  </header>
+
+  <div class="wrapper">
+
+    <!-- ══════════════════════ ALERTS ══════════════════════ -->
+    <div id="alert-banner"></div>
+
+    <!-- ══════════════════════ SYSINFO BAR ══════════════════════ -->
+    <div class="sysinfo-bar" id="sysinfo-bar"></div>
+
+    <!-- ══════════════════════ TOP ROW: 4 KPI cards ══════════════════════ -->
+    <div class="grid-top" id="grid-top">
+
+      <!-- CPU -->
+      <div class="card metric-card fade-in" id="card-cpu" style="--c1:#3b9eff;--c2:#00d4ff;--glow-rgb:59,158,255">
+        <div class="card-label"><span class="icon">⚡</span> CPU Usage</div>
+        <div class="big-value" id="cpu-val">—<span class="unit">%</span></div>
+        <div class="sub-value" id="cpu-sub">— cores / — threads</div>
+        <div class="gauge-wrap">
+          <div class="gauge-track">
+            <div class="gauge-fill" id="cpu-gauge" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="sparkline-wrap"><canvas id="spark-cpu"></canvas></div>
+      </div>
+
+      <!-- RAM -->
+      <div class="card metric-card fade-in" id="card-ram"
+        style="--c1:#a78bfa;--c2:#7c3aed;--glow-rgb:167,139,250;animation-delay:0.05s">
+        <div class="card-label"><span class="icon">🧠</span> Memory</div>
+        <div class="big-value" id="ram-val">—<span class="unit">%</span></div>
+        <div class="sub-value" id="ram-sub">— / — GB</div>
+        <div class="gauge-wrap">
+          <div class="gauge-track">
+            <div class="gauge-fill" id="ram-gauge" style="width:0%;background:linear-gradient(90deg,#a78bfa,#7c3aed)">
+            </div>
+          </div>
+        </div>
+        <div class="sparkline-wrap"><canvas id="spark-ram"></canvas></div>
+      </div>
+
+      <!-- DISK -->
+      <div class="card metric-card fade-in" id="card-disk"
+        style="--c1:#fb923c;--c2:#f59e0b;--glow-rgb:251,146,60;animation-delay:0.1s">
+        <div class="card-label"><span class="icon">💾</span> Disk</div>
+        <div class="big-value" id="disk-val">—<span class="unit">%</span></div>
+        <div class="sub-value" id="disk-sub">— / — GB</div>
+        <div class="gauge-wrap">
+          <div class="gauge-track">
+            <div class="gauge-fill" id="disk-gauge" style="width:0%;background:linear-gradient(90deg,#fb923c,#f59e0b)">
+            </div>
+          </div>
+        </div>
+        <div class="sparkline-wrap"><canvas id="spark-disk"></canvas></div>
+      </div>
+
+      <!-- TEMP -->
+      <div class="card metric-card fade-in" id="card-temp"
+        style="--c1:#00e5a0;--c2:#00b377;--glow-rgb:0,229,160;animation-delay:0.15s">
+        <div class="card-label"><span class="icon">🌡️</span> Temperature</div>
+        <div class="big-value" id="temp-val">—<span class="unit">°C</span></div>
+        <div class="sub-value" id="temp-sub">CPU Package</div>
+        <div class="gauge-wrap">
+          <div class="gauge-track">
+            <div class="gauge-fill" id="temp-gauge" style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)">
+            </div>
+          </div>
+        </div>
+        <div class="sparkline-wrap"><canvas id="spark-temp"></canvas></div>
+      </div>
+
+    </div><!-- /grid-top -->
+
+    <!-- ══════════════════════ MID ROW ══════════════════════ -->
+    <div class="grid-mid">
+
+      <!-- CPU Cores -->
+      <div class="card fade-in" style="animation-delay:0.2s">
+        <div class="section-title">🔲 CPU Cores</div>
+        <div id="cores-grid"></div>
+      </div>
+
+      <!-- Network -->
+      <div class="card fade-in" style="animation-delay:0.25s">
+        <div class="section-title">🌐 Network</div>
+
+        <div class="net-row">
+          <div class="net-label">
+            <span class="net-arrow" style="color:var(--accent-green)">↓</span>
+            Download (RX)
+          </div>
+          <div>
+            <div class="net-val rx" id="rx-val">—</div>
+          </div>
+        </div>
+
+        <div class="net-row">
+          <div class="net-label">
+            <span class="net-arrow" style="color:var(--accent-blue)">↑</span>
+            Upload (TX)
+          </div>
+          <div>
+            <div class="net-val tx" id="tx-val">—</div>
+          </div>
+        </div>
+
+        <div class="net-row">
+          <div class="net-label">🔌 Interface</div>
+          <div class="net-val" id="net-iface" style="color:var(--text-secondary);font-size:0.75rem">—</div>
+        </div>
+
+        <div class="sparkline-wrap" style="margin-top:16px;height:50px">
+          <canvas id="spark-net"></canvas>
+        </div>
+      </div>
+
+    </div><!-- /grid-mid -->
+
+    <!-- ══════════════════════ BOTTOM ROW ══════════════════════ -->
+    <div class="grid-bottom">
+
+      <!-- Storage & Swap -->
+      <div class="card fade-in" style="animation-delay:0.3s">
+        <div class="section-title">📁 Storage & Memory Detail</div>
+
+        <div class="disk-row">
+          <div class="disk-header">
+            <span class="disk-name">📀 Disk (Primary)</span>
+            <span class="disk-pct" id="disk-pct2" style="color:var(--accent-orange)">—%</span>
+          </div>
+          <div class="disk-bar">
+            <div class="disk-bar-fill" id="disk-bar2"
+              style="width:0%;background:linear-gradient(90deg,#fb923c,#f59e0b)"></div>
+          </div>
+          <div class="disk-details">
+            <span id="disk-used2">—</span>
+            <span id="disk-free2">—</span>
+            <span id="disk-total2">—</span>
+          </div>
+        </div>
+
+        <div class="disk-row">
+          <div class="disk-header">
+            <span class="disk-name">🧠 RAM</span>
+            <span class="disk-pct" id="ram-pct2" style="color:var(--accent-purple)">—%</span>
+          </div>
+          <div class="disk-bar">
+            <div class="disk-bar-fill" id="ram-bar2" style="width:0%;background:linear-gradient(90deg,#a78bfa,#7c3aed)">
+            </div>
+          </div>
+          <div class="disk-details">
+            <span id="ram-used2">—</span>
+            <span id="ram-free2">—</span>
+            <span id="ram-total2">—</span>
+          </div>
+        </div>
+
+        <div class="disk-row">
+          <div class="disk-header">
+            <span class="disk-name">🔄 Swap / Page File</span>
+            <span class="disk-pct" id="swap-pct" style="color:var(--accent-cyan)">—%</span>
+          </div>
+          <div class="disk-bar">
+            <div class="disk-bar-fill" id="swap-bar" style="width:0%;background:linear-gradient(90deg,#00d4ff,#0088cc)">
+            </div>
+          </div>
+          <div class="disk-details">
+            <span id="swap-used">—</span>
+            <span></span>
+            <span id="swap-total">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Info -->
+      <div class="card fade-in" style="animation-delay:0.35s">
+        <div class="section-title">🖥️ System Info</div>
+
+        <div class="info-row">
+          <span class="info-key">🏷️ Hostname</span>
+          <span class="info-val" id="info-hostname">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">🖥️ OS</span>
+          <span class="info-val" id="info-os">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">🏗️ Architecture</span>
+          <span class="info-val" id="info-arch">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">⚙️ CPU</span>
+          <span class="info-val" id="info-cpu" style="font-size:0.68rem;text-align:right;max-width:160px">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">⏱️ Uptime</span>
+          <span class="info-val" id="info-uptime">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">📦 Processes</span>
+          <span class="info-val" id="info-procs">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">📊 Load Avg</span>
+          <span class="info-val" id="info-load">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key"><span class="status-dot"></span> Status</span>
+          <span class="info-val" style="color:var(--accent-green)">Online</span>
+        </div>
+      </div>
+
+    </div><!-- /grid-bottom -->
+
+  </div><!-- /wrapper -->
+
+  <!-- ERROR OVERLAY -->
+  <div id="error-overlay">
+    <div class="error-box">
+      <h2>⚠️ Connection Lost</h2>
+      <p>Unable to reach the metrics server.<br>Retrying every 5 seconds…</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+     SCRIPT
+═══════════════════════════════════════════════════════ -->
+  <script>
+    // ── Sparkline state ──────────────────────────────────────
+    const SPARK_LEN = 40;
+    const sparks = {
+      cpu: { canvas: null, data: [] },
+      ram: { canvas: null, data: [] },
+      disk: { canvas: null, data: [] },
+      temp: { canvas: null, data: [] },
+      net: { canvas: null, rxData: [], txData: [] },
+    };
+
+    function initSparks() {
+      sparks.cpu.canvas = document.getElementById('spark-cpu');
+      sparks.ram.canvas = document.getElementById('spark-ram');
+      sparks.disk.canvas = document.getElementById('spark-disk');
+      sparks.temp.canvas = document.getElementById('spark-temp');
+      sparks.net.canvas = document.getElementById('spark-net');
+    }
+
+    function drawSparkline(canvas, data, color1, color2, maxVal) {
+      if (!canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.offsetWidth || canvas.parentElement.offsetWidth;
+      const h = canvas.offsetHeight || 36;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+      if (!data || data.length < 2) return;
+
+      const max = maxVal || Math.max(...data, 1);
+      const step = w / (data.length - 1);
+
+      // gradient fill
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, hexAlpha(color1, 0.3));
+      grad.addColorStop(1, hexAlpha(color1, 0.0));
+
+      ctx.beginPath();
+      data.forEach((v, i) => {
+        const x = i * step;
+        const y = h - (v / max) * (h - 2) - 1;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      // close fill
+      ctx.lineTo((data.length - 1) * step, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // line
+      const lineGrad = ctx.createLinearGradient(0, 0, w, 0);
+      lineGrad.addColorStop(0, color1);
+      lineGrad.addColorStop(1, color2 || color1);
+
+      ctx.beginPath();
+      data.forEach((v, i) => {
+        const x = i * step;
+        const y = h - (v / max) * (h - 2) - 1;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = lineGrad;
+      ctx.lineWidth = 1.8;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // dot at end
+      const lastX = (data.length - 1) * step;
+      const lastY = h - (data[data.length - 1] / max) * (h - 2) - 1;
+      ctx.beginPath();
+      ctx.arc(lastX, lastY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = color1;
+      ctx.fill();
+    }
+
+    function drawNetSparkline(canvas, rxData, txData) {
+      if (!canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.offsetWidth || canvas.parentElement.offsetWidth;
+      const h = canvas.offsetHeight || 50;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+      const allVals = [...rxData, ...txData];
+      if (allVals.length < 2) return;
+      const max = Math.max(...allVals, 1);
+      const step = w / (Math.max(rxData.length, txData.length) - 1);
+
+      const drawLine = (data, color) => {
+        const grad = ctx.createLinearGradient(0, 0, w, 0);
+        grad.addColorStop(0, color);
+        grad.addColorStop(1, color);
+        ctx.beginPath();
+        data.forEach((v, i) => {
+          const x = i * step;
+          const y = h - (v / max) * (h - 2) - 1;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.5;
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+      };
+
+      drawLine(rxData, '#00e5a0');
+      drawLine(txData, '#3b9eff');
+    }
+
+    function hexAlpha(hex, a) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+
+    function pushSpark(arr, val) {
+      arr.push(val);
+      if (arr.length > SPARK_LEN) arr.shift();
+    }
+
+    // ── Formatting ───────────────────────────────────────────
+    function fmtBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 B/s';
+      if (bytes < 1024) return `${bytes} B/s`;
+      if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB/s`;
+      if (bytes < 1073741824) return `${(bytes / 1048576).toFixed(1)} MB/s`;
+      return `${(bytes / 1073741824).toFixed(2)} GB/s`;
+    }
+
+    function fmtUptime(secs) {
+      const d = Math.floor(secs / 86400);
+      const h = Math.floor((secs % 86400) / 3600);
+      const m = Math.floor((secs % 3600) / 60);
+      const parts = [];
+      if (d > 0) parts.push(`${d}d`);
+      if (h > 0) parts.push(`${h}h`);
+      parts.push(`${m}m`);
+      return parts.join(' ');
+    }
+
+    function colorForPct(pct) {
+      if (pct >= 90) return '#ff4d6d';
+      if (pct >= 75) return '#ffd166';
+      return null; // use default
+    }
+
+    // ── Alert system ─────────────────────────────────────────
+    function checkAlerts(m) {
+      const alerts = [];
+      if (m.cpu >= 90) alerts.push(`⚡ CPU at ${m.cpu}%`);
+      if (m.ram >= 90) alerts.push(`🧠 RAM at ${m.ram}%`);
+      if (m.disk && m.disk.percent >= 90) alerts.push(`💾 Disk at ${m.disk.percent}%`);
+      if (m.temp && m.temp >= 85) alerts.push(`🌡️ Temp at ${m.temp}°C`);
+      const banner = document.getElementById('alert-banner');
+      if (alerts.length > 0) {
+        banner.style.display = 'block';
+        banner.innerHTML = '⚠️ High Usage Alert: ' + alerts.join(' · ');
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+
+    // ── Set element text with optional flash ─────────────────
+    function setText(id, val, flash = true) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.dataset.last === String(val)) return;
+      el.dataset.last = String(val);
+      el.textContent = val;
+      if (flash) {
+        el.classList.remove('value-flash');
+        void el.offsetWidth;
+        el.classList.add('value-flash');
+      }
+    }
+
+    // ── Build cores grid ─────────────────────────────────────
+    let coreCount = 0;
+
+    function buildCores(coreLoads) {
+      const grid = document.getElementById('cores-grid');
+      if (!grid) return;
+      if (coreLoads.length !== coreCount) {
+        coreCount = coreLoads.length;
+        grid.innerHTML = coreLoads.map((c, i) => `
+        <div class="core-cell" id="core-${i}">
+          <div class="core-label">C${i}</div>
+          <div class="core-pct" id="core-pct-${i}">0%</div>
+          <div class="core-bar"><div class="core-bar-fill" id="core-bar-${i}" style="width:0%"></div></div>
+        </div>`).join('');
+      }
+      coreLoads.forEach((c, i) => {
+        const pct = c.load;
+        const col = pct >= 85 ? '#ff4d6d' : pct >= 60 ? '#ffd166' : '#3b9eff';
+        const pctEl = document.getElementById(`core-pct-${i}`);
+        const barEl = document.getElementById(`core-bar-${i}`);
+        if (pctEl) { pctEl.textContent = pct + '%'; pctEl.style.color = col; }
+        if (barEl) {
+          barEl.style.width = pct + '%';
+          barEl.style.background = `linear-gradient(90deg,${col},${col}99)`;
+        }
+      });
+    }
+
+    // ── Sysinfo bar ──────────────────────────────────────────
+    let sysinfoBuilt = false;
+
+    function buildSysinfo(m) {
+      if (sysinfoBuilt) return;
+      sysinfoBuilt = true;
+      const bar = document.getElementById('sysinfo-bar');
+      const data = [
+        m.system.hostname,
+        m.system.distro || m.system.platform,
+        `${m.cpuInfo.model} (${m.cpuInfo.cores}C/${m.cpuInfo.threads}T @ ${m.cpuInfo.speed}GHz)`,
+        m.system.arch,
+        `Kernel ${m.system.release}`,
+      ];
+      bar.innerHTML = data.map(d => `<span class="sysinfo-pill">${d}</span>`).join('');
+    }
+
+    // ── Main render ──────────────────────────────────────────
+    function render(m) {
+      // ── Gauges & values ──────────────────────────────────
+      // CPU
+      const cpuColor = colorForPct(m.cpu);
+      document.getElementById('cpu-val').innerHTML =
+        `<span style="${cpuColor ? 'color:' + cpuColor : ''}">${m.cpu}</span><span class="unit">%</span>`;
+      document.getElementById('cpu-gauge').style.width = m.cpu + '%';
+      document.getElementById('cpu-sub').textContent =
+        `${m.cpuInfo.cores} cores / ${m.cpuInfo.threads} threads`;
+
+      // RAM
+      const ramColor = colorForPct(m.ram);
+      document.getElementById('ram-val').innerHTML =
+        `<span style="${ramColor ? 'color:' + ramColor : ''}">${m.ram}</span><span class="unit">%</span>`;
+      document.getElementById('ram-gauge').style.width = m.ram + '%';
+      document.getElementById('ram-sub').textContent =
+        `${m.memory.used} / ${m.memory.total} GB`;
+
+      // Disk
+      const dsk = m.disk;
+      const diskColor = colorForPct(dsk.percent);
+      document.getElementById('disk-val').innerHTML =
+        `<span style="${diskColor ? 'color:' + diskColor : ''}">${dsk.percent}</span><span class="unit">%</span>`;
+      document.getElementById('disk-gauge').style.width = dsk.percent + '%';
+      document.getElementById('disk-sub').textContent =
+        `${dsk.used} / ${dsk.total} GB`;
+
+      // Temp
+      const tempVal = m.temp !== null ? m.temp : '—';
+      const tempPct = m.temp !== null ? Math.min((m.temp / 100) * 100, 100) : 0;
+      const tempColor = m.temp !== null && m.temp >= 85 ? '#ff4d6d' : m.temp >= 70 ? '#ffd166' : null;
+      document.getElementById('temp-val').innerHTML =
+        `<span style="${tempColor ? 'color:' + tempColor : ''}">${tempVal}</span><span class="unit">°C</span>`;
+      document.getElementById('temp-gauge').style.width = tempPct + '%';
+      const tempSub = m.temp !== null
+        ? (m.temp >= 85 ? '🔴 Critical' : m.temp >= 70 ? '🟡 Warm' : '🟢 Normal')
+        : 'N/A (sensor not available)';
+      document.getElementById('temp-sub').textContent = tempSub;
+
+      // Network
+      document.getElementById('rx-val').textContent = fmtBytes(m.rx);
+      document.getElementById('tx-val').textContent = fmtBytes(m.tx);
+      document.getElementById('net-iface').textContent = m.network.interface || '—';
+
+      // Disk detail
+      document.getElementById('disk-pct2').textContent = dsk.percent + '%';
+      document.getElementById('disk-bar2').style.width = dsk.percent + '%';
+      document.getElementById('disk-used2').textContent = `Used: ${dsk.used} GB`;
+      document.getElementById('disk-free2').textContent = `Free: ${dsk.free} GB`;
+      document.getElementById('disk-total2').textContent = `Total: ${dsk.total} GB`;
+
+      // RAM detail
+      document.getElementById('ram-pct2').textContent = m.ram + '%';
+      document.getElementById('ram-bar2').style.width = m.ram + '%';
+      document.getElementById('ram-used2').textContent = `Used: ${m.memory.used} GB`;
+      document.getElementById('ram-free2').textContent = `Free: ${m.memory.free} GB`;
+      document.getElementById('ram-total2').textContent = `Total: ${m.memory.total} GB`;
+
+      // Swap
+      document.getElementById('swap-pct').textContent = m.swap.percent + '%';
+      document.getElementById('swap-bar').style.width = m.swap.percent + '%';
+      document.getElementById('swap-used').textContent = `Used: ${m.swap.used} GB`;
+      document.getElementById('swap-total').textContent = `Total: ${m.swap.total} GB`;
+
+      // System info
+      document.getElementById('info-hostname').textContent = m.system.hostname;
+      document.getElementById('info-os').textContent =
+        `${m.system.distro || m.system.platform} ${m.system.release}`;
+      document.getElementById('info-arch').textContent = m.system.arch;
+      document.getElementById('info-cpu').textContent =
+        `${m.cpuInfo.model} @ ${m.cpuInfo.speed}GHz`;
+      document.getElementById('info-uptime').textContent = fmtUptime(m.uptime);
+      document.getElementById('info-procs').textContent = m.processes + ' running';
+      document.getElementById('info-load').textContent = m.load;
+
+      // Header
+      document.getElementById('header-hostname').textContent = m.system.hostname;
+
+      // Cores
+      if (m.cpuInfo.coreLoads && m.cpuInfo.coreLoads.length) {
+        buildCores(m.cpuInfo.coreLoads);
+      }
+
+      // Sysinfo bar
+      buildSysinfo(m);
+
+      // Sparklines
+      pushSpark(sparks.cpu.data, m.cpu);
+      pushSpark(sparks.ram.data, m.ram);
+      pushSpark(sparks.disk.data, dsk.percent);
+      pushSpark(sparks.temp.data, m.temp || 0);
+      pushSpark(sparks.net.rxData, m.rx / 1024);
+      pushSpark(sparks.net.txData, m.tx / 1024);
+
+      drawSparkline(sparks.cpu.canvas, sparks.cpu.data, '#3b9eff', '#00d4ff', 100);
+      drawSparkline(sparks.ram.canvas, sparks.ram.data, '#a78bfa', '#7c3aed', 100);
+      drawSparkline(sparks.disk.canvas, sparks.disk.data, '#fb923c', '#f59e0b', 100);
+      drawSparkline(sparks.temp.canvas, sparks.temp.data, '#00e5a0', '#00b377', 100);
+      drawNetSparkline(sparks.net.canvas, sparks.net.rxData, sparks.net.txData);
+
+      // Alerts
+      checkAlerts(m);
+
+      // Timestamp
+      const now = new Date();
+      document.getElementById('last-updated').textContent =
+        now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    // ── Fetch & refresh ──────────────────────────────────────
+    let fetchFailed = false;
+
+    async function fetchMetrics() {
+      const ring = document.getElementById('refresh-ring');
+      ring.classList.add('spinning');
+      try {
+        const res = await fetch('/metrics/full');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const m = await res.json();
+        document.getElementById('error-overlay').classList.remove('show');
+        document.getElementById('live-dot').style.background = 'var(--accent-green)';
+        fetchFailed = false;
+        render(m);
+      } catch (e) {
+        console.error('Fetch error:', e);
+        document.getElementById('live-dot').style.background = 'var(--accent-red)';
+        document.getElementById('live-dot').style.boxShadow = '0 0 10px var(--accent-red)';
+        if (!fetchFailed) {
+          fetchFailed = true;
+          document.getElementById('error-overlay').classList.add('show');
+        }
+      } finally {
+        ring.classList.remove('spinning');
+      }
+    }
+
+    // ── Boot ─────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      initSparks();
+      fetchMetrics();
+      setInterval(fetchMetrics, 5000);
+    });
+
+    window.addEventListener('resize', () => {
+      // redraw sparklines on resize
+      drawSparkline(sparks.cpu.canvas, sparks.cpu.data, '#3b9eff', '#00d4ff', 100);
+      drawSparkline(sparks.ram.canvas, sparks.ram.data, '#a78bfa', '#7c3aed', 100);
+      drawSparkline(sparks.disk.canvas, sparks.disk.data, '#fb923c', '#f59e0b', 100);
+      drawSparkline(sparks.temp.canvas, sparks.temp.data, '#00e5a0', '#00b377', 100);
+      drawNetSparkline(sparks.net.canvas, sparks.net.rxData, sparks.net.txData);
+    });
+  </script>
+</body>
+
+</html>

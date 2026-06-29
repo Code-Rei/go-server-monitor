@@ -1,0 +1,23 @@
+# Binaries
+server-monitor
+server-monitor.exe
+
+# Docker tarballs
+server-monitor.tar
+*.tar
+*.tar.gz
+
+# Node.js (Old artifacts)
+node_modules/
+package-lock.json
+package.json
+server.js
+public/
+
+# Go workspace
+*.test
+*.prof
+
+# OS specific
+.DS_Store
+Thumbs.db
