@@ -797,8 +797,17 @@
       margin-bottom: 12px;
     }
 
-    @media (max-width: 1100px) { .grid-sql-kpi { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 640px)  { .grid-sql-kpi { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 1100px) {
+      .grid-sql-kpi {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid-sql-kpi {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
 
     .sql-kpi {
       background: var(--bg-card);
@@ -813,14 +822,16 @@
 
     .sql-kpi:hover {
       border-color: var(--border-glow);
-      box-shadow: 0 0 30px rgba(59, 158, 255, 0.07), 0 8px 32px rgba(0,0,0,0.3);
+      box-shadow: 0 0 30px rgba(59, 158, 255, 0.07), 0 8px 32px rgba(0, 0, 0, 0.3);
       transform: translateY(-2px);
     }
 
     .sql-kpi::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 2px;
       border-radius: var(--radius-card) var(--radius-card) 0 0;
       background: var(--kpi-accent, linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)));
@@ -864,7 +875,7 @@
     .sql-kpi-gauge {
       margin-top: 10px;
       height: 4px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
       overflow: hidden;
     }
@@ -878,9 +889,20 @@
     }
 
     /* PLE colour coding */
-    .ple-good    { color: var(--accent-green) !important; --kpi-glow: 0,229,160; }
-    .ple-warn    { color: var(--accent-yellow) !important; --kpi-glow: 255,209,102; }
-    .ple-critical{ color: var(--accent-red) !important; --kpi-glow: 255,77,109; }
+    .ple-good {
+      color: var(--accent-green) !important;
+      --kpi-glow: 0, 229, 160;
+    }
+
+    .ple-warn {
+      color: var(--accent-yellow) !important;
+      --kpi-glow: 255, 209, 102;
+    }
+
+    .ple-critical {
+      color: var(--accent-red) !important;
+      --kpi-glow: 255, 77, 109;
+    }
 
     /* Bottom row: memory breakdown + PLE sparkline */
     .grid-sql-detail {
@@ -889,7 +911,11 @@
       gap: 12px;
     }
 
-    @media (max-width: 900px) { .grid-sql-detail { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) {
+      .grid-sql-detail {
+        grid-template-columns: 1fr;
+      }
+    }
 
     /* Stacked memory breakdown bar */
     .mem-breakdown-wrap {
@@ -901,7 +927,7 @@
       height: 28px;
       border-radius: var(--radius-sm);
       overflow: hidden;
-      background: rgba(255,255,255,0.04);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
       margin-bottom: 12px;
     }
@@ -912,9 +938,17 @@
       position: relative;
     }
 
-    .mem-seg-buf  { background: linear-gradient(90deg, #3b9eff, #00d4ff); }
-    .mem-seg-plan { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
-    .mem-seg-other{ background: linear-gradient(90deg, #fb923c, #f59e0b); }
+    .mem-seg-buf {
+      background: linear-gradient(90deg, #3b9eff, #00d4ff);
+    }
+
+    .mem-seg-plan {
+      background: linear-gradient(90deg, #a78bfa, #7c3aed);
+    }
+
+    .mem-seg-other {
+      background: linear-gradient(90deg, #fb923c, #f59e0b);
+    }
 
     .mem-legend {
       display: flex;
@@ -981,7 +1015,12 @@
       gap: 12px;
       margin-top: 12px;
     }
-    @media (max-width: 800px) { .grid-sql-health { grid-template-columns: 1fr; } }
+
+    @media (max-width: 800px) {
+      .grid-sql-health {
+        grid-template-columns: 1fr;
+      }
+    }
 
     /* second KPI row — 4 columns */
     .grid-sql-kpi2 {
@@ -991,8 +1030,18 @@
       margin-top: 0;
       margin-bottom: 12px;
     }
-    @media (max-width: 1100px) { .grid-sql-kpi2 { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 640px)  { .grid-sql-kpi2 { grid-template-columns: repeat(2, 1fr); } }
+
+    @media (max-width: 1100px) {
+      .grid-sql-kpi2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid-sql-kpi2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
 
     /* health gauge SVG */
     .health-gauge-wrap {
@@ -1001,6 +1050,7 @@
       align-items: center;
       padding: 8px 0 0;
     }
+
     .health-score-big {
       font-family: var(--font-mono);
       font-size: 3rem;
@@ -1008,6 +1058,7 @@
       line-height: 1;
       transition: color 0.6s;
     }
+
     .health-status-label {
       font-size: 0.78rem;
       font-weight: 600;
@@ -1015,6 +1066,7 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
+
     .crash-risk-badge {
       display: inline-flex;
       align-items: center;
@@ -1028,10 +1080,30 @@
       text-transform: uppercase;
       letter-spacing: 0.07em;
     }
-    .crash-risk-badge.low      { background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.3); color:var(--accent-green); }
-    .crash-risk-badge.medium   { background:rgba(255,209,102,0.1); border:1px solid rgba(255,209,102,0.3); color:var(--accent-yellow); }
-    .crash-risk-badge.high     { background:rgba(251,146,60,0.1); border:1px solid rgba(251,146,60,0.3); color:var(--accent-orange); }
-    .crash-risk-badge.critical { background:rgba(255,77,109,0.1); border:1px solid rgba(255,77,109,0.3); color:var(--accent-red); }
+
+    .crash-risk-badge.low {
+      background: rgba(0, 229, 160, 0.1);
+      border: 1px solid rgba(0, 229, 160, 0.3);
+      color: var(--accent-green);
+    }
+
+    .crash-risk-badge.medium {
+      background: rgba(255, 209, 102, 0.1);
+      border: 1px solid rgba(255, 209, 102, 0.3);
+      color: var(--accent-yellow);
+    }
+
+    .crash-risk-badge.high {
+      background: rgba(251, 146, 60, 0.1);
+      border: 1px solid rgba(251, 146, 60, 0.3);
+      color: var(--accent-orange);
+    }
+
+    .crash-risk-badge.critical {
+      background: rgba(255, 77, 109, 0.1);
+      border: 1px solid rgba(255, 77, 109, 0.3);
+      color: var(--accent-red);
+    }
 
     /* risk factors list */
     .risk-factors-list {
@@ -1044,6 +1116,7 @@
       max-height: 260px;
       overflow-y: auto;
     }
+
     .risk-factor-item {
       font-size: 0.72rem;
       color: var(--text-secondary);
@@ -1053,8 +1126,12 @@
       border-radius: var(--radius-sm);
       line-height: 1.4;
     }
+
     /* capacity bar for SQL vs system RAM */
-    .cap-bar-wrap { margin: 10px 0 6px; }
+    .cap-bar-wrap {
+      margin: 10px 0 6px;
+    }
+
     .cap-bar-label {
       display: flex;
       justify-content: space-between;
@@ -1062,16 +1139,18 @@
       color: var(--text-muted);
       margin-bottom: 4px;
     }
+
     .cap-bar {
       height: 6px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
       overflow: hidden;
     }
+
     .cap-bar-fill {
       height: 100%;
       border-radius: 10px;
-      transition: width 0.7s cubic-bezier(0.34,1.56,0.64,1);
+      transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
   </style>
 </head>
@@ -1096,11 +1175,366 @@
 
   <div class="wrapper">
 
+    <!-- ══════════════════════ SQL SERVER ══════════════════════ -->
+    <div class="sql-section-header">
+      <div class="sql-section-title">🗄️ SQL Server Analytics</div>
+      <span class="sql-status-badge unconfigured" id="sql-status-badge">
+        <span class="sql-status-dot"></span>
+        <span id="sql-status-text">Checking…</span>
+      </span>
+    </div>
+
+    <div id="sql-unconfigured">
+      <div class="sql-nc-icon">🗄️</div>
+      <div>SQL Server monitoring is not configured.</div>
+      <code>set SQL_HOST=your-server
+set SQL_USER=your-login
+set SQL_PASS=your-password
+set SQL_DB=master</code>
+    </div>
+
+    <div id="sql-panel">
+
+      <!-- KPI row -->
+      <div class="grid-sql-kpi">
+
+        <!-- Committed Memory -->
+        <div class="sql-kpi"
+          style="--kpi-accent:linear-gradient(90deg,#3b9eff,#00d4ff);--kpi-color:#3b9eff;--kpi-glow:59,158,255">
+          <div class="sql-kpi-label">🧠 Committed</div>
+          <div class="sql-kpi-value" id="sql-committed">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-committed-sub">of — MB target</div>
+          <div class="sql-kpi-gauge">
+            <div class="sql-kpi-gauge-fill" id="sql-committed-gauge"
+              style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div>
+          </div>
+        </div>
+
+        <!-- Buffer Pool -->
+        <div class="sql-kpi"
+          style="--kpi-accent:linear-gradient(90deg,#00d4ff,#0088cc);--kpi-color:#00d4ff;--kpi-glow:0,212,255">
+          <div class="sql-kpi-label">📦 Buffer Pool</div>
+          <div class="sql-kpi-value" id="sql-bufpool">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-bufpool-sub">—% of committed</div>
+          <div class="sql-kpi-gauge">
+            <div class="sql-kpi-gauge-fill" id="sql-bufpool-gauge"
+              style="width:0%;background:linear-gradient(90deg,#00d4ff,#0088cc)"></div>
+          </div>
+        </div>
+
+        <!-- Plan Cache -->
+        <div class="sql-kpi"
+          style="--kpi-accent:linear-gradient(90deg,#a78bfa,#7c3aed);--kpi-color:#a78bfa;--kpi-glow:167,139,250">
+          <div class="sql-kpi-label">📋 Plan Cache</div>
+          <div class="sql-kpi-value" id="sql-plancache">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-plancache-sub">compiled plans</div>
+          <div class="sql-kpi-gauge">
+            <div class="sql-kpi-gauge-fill" id="sql-plancache-gauge"
+              style="width:0%;background:linear-gradient(90deg,#a78bfa,#7c3aed)"></div>
+          </div>
+        </div>
+
+        <!-- Batch Requests/sec -->
+        <div class="sql-kpi"
+          style="--kpi-accent:linear-gradient(90deg,#fb923c,#f59e0b);--kpi-color:#fb923c;--kpi-glow:251,146,60">
+          <div class="sql-kpi-label">⚡ Batch Req/s</div>
+          <div class="sql-kpi-value" id="sql-batchreq">—<span class="sql-kpi-unit">/s</span></div>
+          <div class="sql-kpi-sub" id="sql-conns-sub">— active sessions</div>
+        </div>
+
+        <!-- Page Life Expectancy -->
+        <div class="sql-kpi" id="sql-ple-card"
+          style="--kpi-accent:linear-gradient(90deg,#00e5a0,#00b377);--kpi-color:#00e5a0;--kpi-glow:0,229,160">
+          <div class="sql-kpi-label">⏱ Page Life Exp.</div>
+          <div class="sql-kpi-value" id="sql-ple">—<span class="sql-kpi-unit">s</span></div>
+          <div class="sql-kpi-sub" id="sql-ple-sub">🟢 Healthy</div>
+          <div class="sql-kpi-gauge">
+            <div class="sql-kpi-gauge-fill" id="sql-ple-gauge"
+              style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div>
+          </div>
+        </div>
+
+      </div><!-- /grid-sql-kpi -->
+
+      <!-- Second KPI row: system-level metrics -->
+      <div class="grid-sql-kpi grid-sql-kpi2" style="margin-bottom:12px">
+
+        <!-- Total Physical RAM -->
+        <div class="sql-kpi"
+          style="--kpi-accent:linear-gradient(90deg,#64748b,#94a3b8);--kpi-color:#94a3b8;--kpi-glow:148,163,184">
+          <div class="sql-kpi-label">💾 Total RAM</div>
+          <div class="sql-kpi-value" id="sql-total-ram">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-total-ram-sub">— GB system</div>
+        </div>
+
+        <!-- Available RAM -->
+        <div class="sql-kpi"
+          style="--kpi-accent:linear-gradient(90deg,#00e5a0,#00b377);--kpi-color:#00e5a0;--kpi-glow:0,229,160">
+          <div class="sql-kpi-label">🟢 Available RAM</div>
+          <div class="sql-kpi-value" id="sql-avail-ram">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-avail-ram-sub">—% free</div>
+          <div class="sql-kpi-gauge">
+            <div class="sql-kpi-gauge-fill" id="sql-avail-gauge"
+              style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div>
+          </div>
+        </div>
+
+        <!-- Cache Hit Ratio -->
+        <div class="sql-kpi"
+          style="--kpi-accent:linear-gradient(90deg,#3b9eff,#a78bfa);--kpi-color:#3b9eff;--kpi-glow:59,158,255">
+          <div class="sql-kpi-label">🎯 Cache Hit</div>
+          <div class="sql-kpi-value" id="sql-cache-hit">—<span class="sql-kpi-unit">%</span></div>
+          <div class="sql-kpi-sub" id="sql-cache-hit-sub">buffer pool efficiency</div>
+          <div class="sql-kpi-gauge">
+            <div class="sql-kpi-gauge-fill" id="sql-cache-gauge"
+              style="width:0%;background:linear-gradient(90deg,#3b9eff,#a78bfa)"></div>
+          </div>
+        </div>
+
+        <!-- Lazy Writes/s -->
+        <div class="sql-kpi"
+          style="--kpi-accent:linear-gradient(90deg,#ff4d6d,#c8002a);--kpi-color:#ff4d6d;--kpi-glow:255,77,109">
+          <div class="sql-kpi-label">💧 Lazy Writes/s</div>
+          <div class="sql-kpi-value" id="sql-lazy">—<span class="sql-kpi-unit">/s</span></div>
+          <div class="sql-kpi-sub" id="sql-lazy-sub">0 = no memory pressure</div>
+        </div>
+
+      </div><!-- /grid-sql-kpi2 -->
+
+      <!-- Detail row: memory breakdown + PLE trend -->
+      <div class="grid-sql-detail">
+
+        <!-- Stacked memory breakdown -->
+        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#3b9eff,#a78bfa)">
+          <div class="section-title">🧠 Memory Distribution</div>
+          <div class="mem-breakdown-wrap">
+            <div class="mem-breakdown-bar">
+              <div class="mem-seg mem-seg-buf" id="sql-seg-buf" style="width:0%" title="Buffer Pool"></div>
+              <div class="mem-seg mem-seg-plan" id="sql-seg-plan" style="width:0%" title="Plan Cache"></div>
+              <div class="mem-seg mem-seg-other" id="sql-seg-other" style="width:0%" title="Other"></div>
+            </div>
+            <div class="mem-legend">
+              <div class="mem-legend-item">
+                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#3b9eff,#00d4ff)"></div>
+                Buffer Pool &nbsp;<span class="mem-legend-val" id="sql-leg-buf">—</span>
+              </div>
+              <div class="mem-legend-item">
+                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)"></div>
+                Plan Cache &nbsp;<span class="mem-legend-val" id="sql-leg-plan">—</span>
+              </div>
+              <div class="mem-legend-item">
+                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#fb923c,#f59e0b)"></div>
+                Other &nbsp;<span class="mem-legend-val" id="sql-leg-other">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Committed vs Target detail rows -->
+          <div style="margin-top:18px">
+            <div class="disk-row">
+              <div class="disk-header">
+                <span class="disk-name">📦 Committed Memory</span>
+                <span class="disk-pct" id="sql-committed-pct2" style="color:var(--accent-blue)">—%</span>
+              </div>
+              <div class="disk-bar">
+                <div class="disk-bar-fill" id="sql-committed-bar2"
+                  style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div>
+              </div>
+              <div class="disk-details">
+                <span id="sql-committed-used2">—</span>
+                <span></span>
+                <span id="sql-committed-target2">—</span>
+              </div>
+            </div>
+
+            <div class="disk-row">
+              <div class="disk-header">
+                <span class="disk-name">📁 Buffer Pool</span>
+                <span class="disk-pct" id="sql-bufpool-pct2" style="color:var(--accent-cyan)">—%</span>
+              </div>
+              <div class="disk-bar">
+                <div class="disk-bar-fill" id="sql-bufpool-bar2"
+                  style="width:0%;background:linear-gradient(90deg,#00d4ff,#0088cc)"></div>
+              </div>
+              <div class="disk-details">
+                <span id="sql-bufpool-used2">—</span>
+                <span></span>
+                <span id="sql-bufpool-of2">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLE sparkline trend -->
+        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#00e5a0,#00b377)">
+          <div class="section-title">⏱ Page Life Expectancy Trend</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div>
+              <span style="font-family:var(--font-mono);font-size:1.8rem;font-weight:700" id="sql-ple-big">—</span>
+              <span style="color:var(--text-secondary);font-size:0.85rem"> seconds</span>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:0.68rem;color:var(--text-muted)">Threshold</div>
+              <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--accent-green)">&gt; 300s good</div>
+            </div>
+          </div>
+
+          <!-- PLE threshold guidelines -->
+          <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+            <span
+              style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);color:var(--accent-green)">🟢
+              &ge;300s Healthy</span>
+            <span
+              style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(255,209,102,0.1);border:1px solid rgba(255,209,102,0.2);color:var(--accent-yellow)">🟡
+              100–300s Warn</span>
+            <span
+              style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.2);color:var(--accent-red)">🔴
+              &lt;100s Critical</span>
+          </div>
+
+          <div style="height:80px">
+            <canvas id="spark-ple" style="width:100%;height:100%"></canvas>
+          </div>
+
+          <!-- Active connections & batch row -->
+          <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
+            <div
+              style="flex:1;min-width:100px;background:rgba(59,158,255,0.05);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+              <div
+                style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px">
+                🔌 Active Sessions</div>
+              <div style="font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:var(--accent-blue)"
+                id="sql-conns-big">—</div>
+            </div>
+            <div
+              style="flex:1;min-width:100px;background:rgba(251,146,60,0.05);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+              <div
+                style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px">
+                ⚡ Batch Req/s</div>
+              <div style="font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:var(--accent-orange)"
+                id="sql-batch-big">—</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /grid-sql-detail -->
+
+      <!-- Health score + Risk panel -->
+      <div class="grid-sql-health">
+
+        <!-- Health Score gauge -->
+        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#00e5a0,#3b9eff)">
+          <div class="section-title">🏥 Server Health Score</div>
+          <div class="health-gauge-wrap">
+
+            <!-- SVG arc gauge: semicircle, 0=left 100=right -->
+            <svg viewBox="0 0 200 110" width="200" height="110" style="overflow:visible">
+              <!-- track -->
+              <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14"
+                stroke-linecap="round" />
+              <!-- fill arc -->
+              <path id="health-arc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#00e5a0" stroke-width="14"
+                stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="0"
+                style="transition: stroke-dashoffset 0.9s cubic-bezier(0.34,1.1,0.64,1), stroke 0.6s" />
+              <!-- score text -->
+              <text id="health-arc-score" x="100" y="88" text-anchor="middle" font-size="34" font-weight="700"
+                fill="#e2eaf7" font-family="'JetBrains Mono',monospace">—</text>
+              <text x="100" y="104" text-anchor="middle" font-size="8.5" font-weight="600" letter-spacing="1"
+                fill="#3d5070">HEALTH SCORE</text>
+            </svg>
+
+            <div class="health-score-big" id="health-score-label" style="color:var(--accent-green)">—</div>
+            <div class="health-status-label" id="health-status-label" style="color:var(--text-muted)">Checking...</div>
+            <div class="crash-risk-badge low" id="crash-risk-badge">
+              <span>⚡</span><span>Crash Risk: </span><span id="crash-risk-text">—</span>
+            </div>
+          </div>
+
+          <!-- System RAM capacity bars -->
+          <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
+            <div class="cap-bar-wrap">
+              <div class="cap-bar-label">
+                <span>SQL vs System RAM</span>
+                <span id="sql-sys-pct-label">—%</span>
+              </div>
+              <div class="cap-bar">
+                <div class="cap-bar-fill" id="sql-sys-bar"
+                  style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div>
+              </div>
+            </div>
+            <div class="cap-bar-wrap">
+              <div class="cap-bar-label">
+                <span>Free System RAM</span>
+                <span id="sql-free-pct-label">—%</span>
+              </div>
+              <div class="cap-bar">
+                <div class="cap-bar-fill" id="sql-free-bar"
+                  style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap">
+              <div style="font-size:0.65rem;color:var(--text-muted)">Compilations/s
+                <span style="font-family:var(--font-mono);color:var(--text-primary);font-size:0.75rem;display:block"
+                  id="sql-compil">—</span>
+              </div>
+              <div style="font-size:0.65rem;color:var(--text-muted)">Lock Waits/s
+                <span style="font-family:var(--font-mono);color:var(--text-primary);font-size:0.75rem;display:block"
+                  id="sql-lockwaits">—</span>
+              </div>
+              <div style="font-size:0.65rem;color:var(--text-muted)">Deadlocks/s
+                <span style="font-family:var(--font-mono);color:var(--accent-red);font-size:0.75rem;display:block"
+                  id="sql-deadlocks">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Factors -->
+        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#ff4d6d,#ffd166)">
+          <div class="section-title">⚠️ Risk Analysis</div>
+
+          <!-- Max-before-crash estimate -->
+          <div
+            style="background:rgba(255,77,109,0.06);border:1px solid rgba(255,77,109,0.15);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px">
+            <div
+              style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:6px">
+              📊 Memory Headroom</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <div>
+                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--accent-orange)"
+                  id="sql-headroom-mb">—</div>
+                <div style="font-size:0.62rem;color:var(--text-muted)">MB until target limit</div>
+              </div>
+              <div>
+                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--accent-cyan)"
+                  id="sql-free-os-gb">—</div>
+                <div style="font-size:0.62rem;color:var(--text-muted)">GB OS free RAM</div>
+              </div>
+              <div>
+                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700" id="sql-cache-status-big"
+                  style="color:var(--accent-green)">—</div>
+                <div style="font-size:0.62rem;color:var(--text-muted)">cache hit ratio</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk factors list -->
+          <div
+            style="font-size:0.68rem;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">
+            Active Risk Factors</div>
+          <ul class="risk-factors-list" id="sql-risk-list">
+            <li class="risk-factor-item">⏳ Waiting for data...</li>
+          </ul>
+        </div>
+
+      </div><!-- /grid-sql-health -->
+
+    </div><!-- /sql-panel -->
     <!-- ══════════════════════ ALERTS ══════════════════════ -->
     <div id="alert-banner"></div>
 
     <!-- ══════════════════════ SYSINFO BAR ══════════════════════ -->
-    <div class="sysinfo-bar" id="sysinfo-bar"></div>
+    <!-- <div class="sysinfo-bar" id="sysinfo-bar"></div>-->
 
     <!-- ══════════════════════ TOP ROW: 4 KPI cards ══════════════════════ -->
     <div class="grid-top" id="grid-top">
@@ -1306,308 +1740,7 @@
 
     </div><!-- /grid-bottom -->
 
-    <!-- ══════════════════════ SQL SERVER ══════════════════════ -->
-    <div class="sql-section-header">
-      <div class="sql-section-title">🗄️ SQL Server Analytics</div>
-      <span class="sql-status-badge unconfigured" id="sql-status-badge">
-        <span class="sql-status-dot"></span>
-        <span id="sql-status-text">Checking…</span>
-      </span>
-    </div>
 
-    <div id="sql-unconfigured">
-      <div class="sql-nc-icon">🗄️</div>
-      <div>SQL Server monitoring is not configured.</div>
-      <code>set SQL_HOST=your-server
-set SQL_USER=your-login
-set SQL_PASS=your-password
-set SQL_DB=master</code>
-    </div>
-
-    <div id="sql-panel">
-
-      <!-- KPI row -->
-      <div class="grid-sql-kpi">
-
-        <!-- Committed Memory -->
-        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#3b9eff,#00d4ff);--kpi-color:#3b9eff;--kpi-glow:59,158,255">
-          <div class="sql-kpi-label">🧠 Committed</div>
-          <div class="sql-kpi-value" id="sql-committed">—<span class="sql-kpi-unit">MB</span></div>
-          <div class="sql-kpi-sub" id="sql-committed-sub">of — MB target</div>
-          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-committed-gauge" style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div></div>
-        </div>
-
-        <!-- Buffer Pool -->
-        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#00d4ff,#0088cc);--kpi-color:#00d4ff;--kpi-glow:0,212,255">
-          <div class="sql-kpi-label">📦 Buffer Pool</div>
-          <div class="sql-kpi-value" id="sql-bufpool">—<span class="sql-kpi-unit">MB</span></div>
-          <div class="sql-kpi-sub" id="sql-bufpool-sub">—% of committed</div>
-          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-bufpool-gauge" style="width:0%;background:linear-gradient(90deg,#00d4ff,#0088cc)"></div></div>
-        </div>
-
-        <!-- Plan Cache -->
-        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#a78bfa,#7c3aed);--kpi-color:#a78bfa;--kpi-glow:167,139,250">
-          <div class="sql-kpi-label">📋 Plan Cache</div>
-          <div class="sql-kpi-value" id="sql-plancache">—<span class="sql-kpi-unit">MB</span></div>
-          <div class="sql-kpi-sub" id="sql-plancache-sub">compiled plans</div>
-          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-plancache-gauge" style="width:0%;background:linear-gradient(90deg,#a78bfa,#7c3aed)"></div></div>
-        </div>
-
-        <!-- Batch Requests/sec -->
-        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#fb923c,#f59e0b);--kpi-color:#fb923c;--kpi-glow:251,146,60">
-          <div class="sql-kpi-label">⚡ Batch Req/s</div>
-          <div class="sql-kpi-value" id="sql-batchreq">—<span class="sql-kpi-unit">/s</span></div>
-          <div class="sql-kpi-sub" id="sql-conns-sub">— active sessions</div>
-        </div>
-
-        <!-- Page Life Expectancy -->
-        <div class="sql-kpi" id="sql-ple-card" style="--kpi-accent:linear-gradient(90deg,#00e5a0,#00b377);--kpi-color:#00e5a0;--kpi-glow:0,229,160">
-          <div class="sql-kpi-label">⏱ Page Life Exp.</div>
-          <div class="sql-kpi-value" id="sql-ple">—<span class="sql-kpi-unit">s</span></div>
-          <div class="sql-kpi-sub" id="sql-ple-sub">🟢 Healthy</div>
-          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-ple-gauge" style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div></div>
-        </div>
-
-      </div><!-- /grid-sql-kpi -->
-
-      <!-- Second KPI row: system-level metrics -->
-      <div class="grid-sql-kpi grid-sql-kpi2" style="margin-bottom:12px">
-
-        <!-- Total Physical RAM -->
-        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#64748b,#94a3b8);--kpi-color:#94a3b8;--kpi-glow:148,163,184">
-          <div class="sql-kpi-label">💾 Total RAM</div>
-          <div class="sql-kpi-value" id="sql-total-ram">—<span class="sql-kpi-unit">MB</span></div>
-          <div class="sql-kpi-sub" id="sql-total-ram-sub">— GB system</div>
-        </div>
-
-        <!-- Available RAM -->
-        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#00e5a0,#00b377);--kpi-color:#00e5a0;--kpi-glow:0,229,160">
-          <div class="sql-kpi-label">🟢 Available RAM</div>
-          <div class="sql-kpi-value" id="sql-avail-ram">—<span class="sql-kpi-unit">MB</span></div>
-          <div class="sql-kpi-sub" id="sql-avail-ram-sub">—% free</div>
-          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-avail-gauge" style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div></div>
-        </div>
-
-        <!-- Cache Hit Ratio -->
-        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#3b9eff,#a78bfa);--kpi-color:#3b9eff;--kpi-glow:59,158,255">
-          <div class="sql-kpi-label">🎯 Cache Hit</div>
-          <div class="sql-kpi-value" id="sql-cache-hit">—<span class="sql-kpi-unit">%</span></div>
-          <div class="sql-kpi-sub" id="sql-cache-hit-sub">buffer pool efficiency</div>
-          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-cache-gauge" style="width:0%;background:linear-gradient(90deg,#3b9eff,#a78bfa)"></div></div>
-        </div>
-
-        <!-- Lazy Writes/s -->
-        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#ff4d6d,#c8002a);--kpi-color:#ff4d6d;--kpi-glow:255,77,109">
-          <div class="sql-kpi-label">💧 Lazy Writes/s</div>
-          <div class="sql-kpi-value" id="sql-lazy">—<span class="sql-kpi-unit">/s</span></div>
-          <div class="sql-kpi-sub" id="sql-lazy-sub">0 = no memory pressure</div>
-        </div>
-
-      </div><!-- /grid-sql-kpi2 -->
-
-      <!-- Detail row: memory breakdown + PLE trend -->
-      <div class="grid-sql-detail">
-
-        <!-- Stacked memory breakdown -->
-        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#3b9eff,#a78bfa)">
-          <div class="section-title">🧠 Memory Distribution</div>
-          <div class="mem-breakdown-wrap">
-            <div class="mem-breakdown-bar">
-              <div class="mem-seg mem-seg-buf"  id="sql-seg-buf"  style="width:0%" title="Buffer Pool"></div>
-              <div class="mem-seg mem-seg-plan" id="sql-seg-plan" style="width:0%" title="Plan Cache"></div>
-              <div class="mem-seg mem-seg-other"id="sql-seg-other"style="width:0%" title="Other"></div>
-            </div>
-            <div class="mem-legend">
-              <div class="mem-legend-item">
-                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#3b9eff,#00d4ff)"></div>
-                Buffer Pool &nbsp;<span class="mem-legend-val" id="sql-leg-buf">—</span>
-              </div>
-              <div class="mem-legend-item">
-                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)"></div>
-                Plan Cache &nbsp;<span class="mem-legend-val" id="sql-leg-plan">—</span>
-              </div>
-              <div class="mem-legend-item">
-                <div class="mem-legend-dot" style="background:linear-gradient(135deg,#fb923c,#f59e0b)"></div>
-                Other &nbsp;<span class="mem-legend-val" id="sql-leg-other">—</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Committed vs Target detail rows -->
-          <div style="margin-top:18px">
-            <div class="disk-row">
-              <div class="disk-header">
-                <span class="disk-name">📦 Committed Memory</span>
-                <span class="disk-pct" id="sql-committed-pct2" style="color:var(--accent-blue)">—%</span>
-              </div>
-              <div class="disk-bar">
-                <div class="disk-bar-fill" id="sql-committed-bar2" style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div>
-              </div>
-              <div class="disk-details">
-                <span id="sql-committed-used2">—</span>
-                <span></span>
-                <span id="sql-committed-target2">—</span>
-              </div>
-            </div>
-
-            <div class="disk-row">
-              <div class="disk-header">
-                <span class="disk-name">📁 Buffer Pool</span>
-                <span class="disk-pct" id="sql-bufpool-pct2" style="color:var(--accent-cyan)">—%</span>
-              </div>
-              <div class="disk-bar">
-                <div class="disk-bar-fill" id="sql-bufpool-bar2" style="width:0%;background:linear-gradient(90deg,#00d4ff,#0088cc)"></div>
-              </div>
-              <div class="disk-details">
-                <span id="sql-bufpool-used2">—</span>
-                <span></span>
-                <span id="sql-bufpool-of2">—</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PLE sparkline trend -->
-        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#00e5a0,#00b377)">
-          <div class="section-title">⏱ Page Life Expectancy Trend</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <div>
-              <span style="font-family:var(--font-mono);font-size:1.8rem;font-weight:700" id="sql-ple-big">—</span>
-              <span style="color:var(--text-secondary);font-size:0.85rem"> seconds</span>
-            </div>
-            <div style="text-align:right">
-              <div style="font-size:0.68rem;color:var(--text-muted)">Threshold</div>
-              <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--accent-green)">&gt; 300s good</div>
-            </div>
-          </div>
-
-          <!-- PLE threshold guidelines -->
-          <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-            <span style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);color:var(--accent-green)">🟢 &ge;300s Healthy</span>
-            <span style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(255,209,102,0.1);border:1px solid rgba(255,209,102,0.2);color:var(--accent-yellow)">🟡 100–300s Warn</span>
-            <span style="font-size:0.65rem;padding:2px 8px;border-radius:20px;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.2);color:var(--accent-red)">🔴 &lt;100s Critical</span>
-          </div>
-
-          <div style="height:80px">
-            <canvas id="spark-ple" style="width:100%;height:100%"></canvas>
-          </div>
-
-          <!-- Active connections & batch row -->
-          <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
-            <div style="flex:1;min-width:100px;background:rgba(59,158,255,0.05);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
-              <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px">🔌 Active Sessions</div>
-              <div style="font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:var(--accent-blue)" id="sql-conns-big">—</div>
-            </div>
-            <div style="flex:1;min-width:100px;background:rgba(251,146,60,0.05);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
-              <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:4px">⚡ Batch Req/s</div>
-              <div style="font-family:var(--font-mono);font-size:1.2rem;font-weight:700;color:var(--accent-orange)" id="sql-batch-big">—</div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /grid-sql-detail -->
-
-      <!-- Health score + Risk panel -->
-      <div class="grid-sql-health">
-
-        <!-- Health Score gauge -->
-        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#00e5a0,#3b9eff)">
-          <div class="section-title">🏥 Server Health Score</div>
-          <div class="health-gauge-wrap">
-
-            <!-- SVG arc gauge: semicircle, 0=left 100=right -->
-            <svg viewBox="0 0 200 110" width="200" height="110" style="overflow:visible">
-              <!-- track -->
-              <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
-              <!-- fill arc -->
-              <path id="health-arc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
-                stroke="#00e5a0" stroke-width="14" stroke-linecap="round"
-                stroke-dasharray="251.3" stroke-dashoffset="0"
-                style="transition: stroke-dashoffset 0.9s cubic-bezier(0.34,1.1,0.64,1), stroke 0.6s"/>
-              <!-- score text -->
-              <text id="health-arc-score" x="100" y="88" text-anchor="middle"
-                font-size="34" font-weight="700" fill="#e2eaf7"
-                font-family="'JetBrains Mono',monospace">—</text>
-              <text x="100" y="104" text-anchor="middle" font-size="8.5"
-                font-weight="600" letter-spacing="1" fill="#3d5070">HEALTH SCORE</text>
-            </svg>
-
-            <div class="health-score-big" id="health-score-label" style="color:var(--accent-green)">—</div>
-            <div class="health-status-label" id="health-status-label" style="color:var(--text-muted)">Checking...</div>
-            <div class="crash-risk-badge low" id="crash-risk-badge">
-              <span>⚡</span><span>Crash Risk: </span><span id="crash-risk-text">—</span>
-            </div>
-          </div>
-
-          <!-- System RAM capacity bars -->
-          <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
-            <div class="cap-bar-wrap">
-              <div class="cap-bar-label">
-                <span>SQL vs System RAM</span>
-                <span id="sql-sys-pct-label">—%</span>
-              </div>
-              <div class="cap-bar">
-                <div class="cap-bar-fill" id="sql-sys-bar"
-                  style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div>
-              </div>
-            </div>
-            <div class="cap-bar-wrap">
-              <div class="cap-bar-label">
-                <span>Free System RAM</span>
-                <span id="sql-free-pct-label">—%</span>
-              </div>
-              <div class="cap-bar">
-                <div class="cap-bar-fill" id="sql-free-bar"
-                  style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div>
-              </div>
-            </div>
-            <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap">
-              <div style="font-size:0.65rem;color:var(--text-muted)">Compilations/s
-                <span style="font-family:var(--font-mono);color:var(--text-primary);font-size:0.75rem;display:block" id="sql-compil">—</span>
-              </div>
-              <div style="font-size:0.65rem;color:var(--text-muted)">Lock Waits/s
-                <span style="font-family:var(--font-mono);color:var(--text-primary);font-size:0.75rem;display:block" id="sql-lockwaits">—</span>
-              </div>
-              <div style="font-size:0.65rem;color:var(--text-muted)">Deadlocks/s
-                <span style="font-family:var(--font-mono);color:var(--accent-red);font-size:0.75rem;display:block" id="sql-deadlocks">—</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Risk Factors -->
-        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#ff4d6d,#ffd166)">
-          <div class="section-title">⚠️ Risk Analysis</div>
-
-          <!-- Max-before-crash estimate -->
-          <div style="background:rgba(255,77,109,0.06);border:1px solid rgba(255,77,109,0.15);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px">
-            <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:6px">📊 Memory Headroom</div>
-            <div style="display:flex;gap:16px;flex-wrap:wrap">
-              <div>
-                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--accent-orange)" id="sql-headroom-mb">—</div>
-                <div style="font-size:0.62rem;color:var(--text-muted)">MB until target limit</div>
-              </div>
-              <div>
-                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--accent-cyan)" id="sql-free-os-gb">—</div>
-                <div style="font-size:0.62rem;color:var(--text-muted)">GB OS free RAM</div>
-              </div>
-              <div>
-                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700" id="sql-cache-status-big" style="color:var(--accent-green)">—</div>
-                <div style="font-size:0.62rem;color:var(--text-muted)">cache hit ratio</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Risk factors list -->
-          <div style="font-size:0.68rem;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">Active Risk Factors</div>
-          <ul class="risk-factors-list" id="sql-risk-list">
-            <li class="risk-factor-item">⏳ Waiting for data...</li>
-          </ul>
-        </div>
-
-      </div><!-- /grid-sql-health -->
-
-    </div><!-- /sql-panel -->
 
   </div><!-- /wrapper -->
 
@@ -1830,22 +1963,22 @@ set SQL_DB=master</code>
       });
     }
 
-    // ── Sysinfo bar ──────────────────────────────────────────
-    let sysinfoBuilt = false;
 
-    function buildSysinfo(m) {
-      if (sysinfoBuilt) return;
-      sysinfoBuilt = true;
-      const bar = document.getElementById('sysinfo-bar');
-      const data = [
-        m.system.hostname,
-        m.system.distro || m.system.platform,
-        `${m.cpuInfo.model} (${m.cpuInfo.cores}C/${m.cpuInfo.threads}T @ ${m.cpuInfo.speed}GHz)`,
-        m.system.arch,
-        `Kernel ${m.system.release}`,
-      ];
-      bar.innerHTML = data.map(d => `<span class="sysinfo-pill">${d}</span>`).join('');
-    }
+    // ── Sysinfo bar ──────────────────────────────────────────
+    // let sysinfoBuilt = false;
+    // function buildSysinfo(m) {
+    //   if (sysinfoBuilt) return;
+    //   sysinfoBuilt = true;
+    //   const bar = document.getElementById('sysinfo-bar');
+    //   const data = [
+    //     m.system.hostname,
+    //     m.system.distro || m.system.platform,
+    //     `${m.cpuInfo.model} (${m.cpuInfo.cores}C/${m.cpuInfo.threads}T @ ${m.cpuInfo.speed}GHz)`,
+    //     m.system.arch,
+    //     `Kernel ${m.system.release}`,
+    //   ];
+    //   bar.innerHTML = data.map(d => `<span class="sysinfo-pill">${d}</span>`).join('');
+    // }
 
     // ── Main render ──────────────────────────────────────────
     function render(m) {
@@ -2012,10 +2145,10 @@ set SQL_DB=master</code>
     }
 
     function renderSQL(d) {
-      const badge     = document.getElementById('sql-status-badge');
+      const badge = document.getElementById('sql-status-badge');
       const statusTxt = document.getElementById('sql-status-text');
-      const panel     = document.getElementById('sql-panel');
-      const nc        = document.getElementById('sql-unconfigured');
+      const panel = document.getElementById('sql-panel');
+      const nc = document.getElementById('sql-unconfigured');
 
       // Not configured state
       if (!d.configured) {
@@ -2039,27 +2172,27 @@ set SQL_DB=master</code>
       }
 
       // KPI: Committed
-      setText('sql-committed',    d.currentCommittedMB);
+      setText('sql-committed', d.currentCommittedMB);
       setText('sql-committed-sub', `of ${d.targetCommittedMB} MB target`);
       document.getElementById('sql-committed-gauge').style.width = Math.min(d.committedPct, 100) + '%';
 
       // KPI: Buffer Pool
-      setText('sql-bufpool',     d.bufferPoolMB);
+      setText('sql-bufpool', d.bufferPoolMB);
       setText('sql-bufpool-sub', d.bufferPoolPct + '% of committed');
       document.getElementById('sql-bufpool-gauge').style.width = Math.min(d.bufferPoolPct, 100) + '%';
 
       // KPI: Plan Cache
-      setText('sql-plancache',     d.planCacheMB);
+      setText('sql-plancache', d.planCacheMB);
       const planPct = d.currentCommittedMB > 0 ? ((d.planCacheMB / d.currentCommittedMB) * 100).toFixed(1) : 0;
       setText('sql-plancache-sub', planPct + '% of committed');
       document.getElementById('sql-plancache-gauge').style.width = Math.min(planPct, 100) + '%';
 
       // KPI: Batch/sec
-      setText('sql-batchreq',   d.batchRequestsPerSec.toFixed(1));
-      setText('sql-conns-sub',  `${d.activeConnections} active sessions`);
+      setText('sql-batchreq', d.batchRequestsPerSec.toFixed(1));
+      setText('sql-conns-sub', `${d.activeConnections} active sessions`);
 
       // KPI: PLE
-      const pleEl  = document.getElementById('sql-ple');
+      const pleEl = document.getElementById('sql-ple');
       const pleSub = document.getElementById('sql-ple-sub');
       const pleGauge = document.getElementById('sql-ple-gauge');
       setText('sql-ple', d.pageLifeExpectancy);
@@ -2067,8 +2200,8 @@ set SQL_DB=master</code>
 
       const pleColors = { good: '#00e5a0', warn: '#ffd166', critical: '#ff4d6d' };
       const pleLabels = { good: '🟢 Healthy', warn: '🟡 Marginal', critical: '🔴 Critical — add RAM!' };
-      const pleGlows  = { good: '0,229,160', warn: '255,209,102', critical: '255,77,109' };
-      const pleBg     = { good: 'linear-gradient(90deg,#00e5a0,#00b377)', warn: 'linear-gradient(90deg,#ffd166,#f59e0b)', critical: 'linear-gradient(90deg,#ff4d6d,#cc0033)' };
+      const pleGlows = { good: '0,229,160', warn: '255,209,102', critical: '255,77,109' };
+      const pleBg = { good: 'linear-gradient(90deg,#00e5a0,#00b377)', warn: 'linear-gradient(90deg,#ffd166,#f59e0b)', critical: 'linear-gradient(90deg,#ff4d6d,#cc0033)' };
 
       const st = d.pleStatus || 'good';
       pleEl.style.color = pleColors[st];
@@ -2086,28 +2219,28 @@ set SQL_DB=master</code>
 
       // Memory breakdown stacked bar
       const total = d.currentCommittedMB || 1;
-      const bufPct   = Math.min((d.bufferPoolMB / total) * 100, 100);
-      const planPct2 = Math.min((d.planCacheMB  / total) * 100, 100);
-      const othPct   = Math.max(0, Math.min(100 - bufPct - planPct2, 100));
+      const bufPct = Math.min((d.bufferPoolMB / total) * 100, 100);
+      const planPct2 = Math.min((d.planCacheMB / total) * 100, 100);
+      const othPct = Math.max(0, Math.min(100 - bufPct - planPct2, 100));
 
-      document.getElementById('sql-seg-buf').style.width   = bufPct + '%';
-      document.getElementById('sql-seg-plan').style.width  = planPct2 + '%';
+      document.getElementById('sql-seg-buf').style.width = bufPct + '%';
+      document.getElementById('sql-seg-plan').style.width = planPct2 + '%';
       document.getElementById('sql-seg-other').style.width = othPct + '%';
 
-      setText('sql-leg-buf',   d.bufferPoolMB + ' MB');
-      setText('sql-leg-plan',  d.planCacheMB  + ' MB');
+      setText('sql-leg-buf', d.bufferPoolMB + ' MB');
+      setText('sql-leg-plan', d.planCacheMB + ' MB');
       setText('sql-leg-other', d.otherMemoryMB + ' MB');
 
       // Committed detail rows
-      setText('sql-committed-pct2',    d.committedPct + '%', false);
+      setText('sql-committed-pct2', d.committedPct + '%', false);
       document.getElementById('sql-committed-bar2').style.width = Math.min(d.committedPct, 100) + '%';
-      setText('sql-committed-used2',   `Used: ${d.currentCommittedMB} MB`, false);
+      setText('sql-committed-used2', `Used: ${d.currentCommittedMB} MB`, false);
       setText('sql-committed-target2', `Target: ${d.targetCommittedMB} MB`, false);
 
-      setText('sql-bufpool-pct2',   d.bufferPoolPct + '%', false);
+      setText('sql-bufpool-pct2', d.bufferPoolPct + '%', false);
       document.getElementById('sql-bufpool-bar2').style.width = Math.min(d.bufferPoolPct, 100) + '%';
       setText('sql-bufpool-used2', `${d.bufferPoolMB} MB`, false);
-      setText('sql-bufpool-of2',   `of ${d.currentCommittedMB} MB`, false);
+      setText('sql-bufpool-of2', `of ${d.currentCommittedMB} MB`, false);
 
       // Active connections & batch big displays
       setText('sql-conns-big', d.activeConnections);
@@ -2121,10 +2254,10 @@ set SQL_DB=master</code>
       // ── Second KPI row ─────────────────────────────────────────────────────
       const totalGB = (d.totalPhysicalMB / 1024).toFixed(1);
       const availGB = (d.availablePhysicalMB / 1024).toFixed(1);
-      setText('sql-total-ram',    d.totalPhysicalMB.toLocaleString());
+      setText('sql-total-ram', d.totalPhysicalMB.toLocaleString());
       setText('sql-total-ram-sub', `${totalGB} GB system RAM`);
 
-      setText('sql-avail-ram',    d.availablePhysicalMB.toLocaleString());
+      setText('sql-avail-ram', d.availablePhysicalMB.toLocaleString());
       const freePct = d.totalPhysicalMB > 0
         ? ((d.availablePhysicalMB / d.totalPhysicalMB) * 100).toFixed(1) : 0;
       setText('sql-avail-ram-sub', `${freePct}% of system free`);
@@ -2144,24 +2277,24 @@ set SQL_DB=master</code>
       // ── Health Score Arc Gauge ─────────────────────────────────────────────
       const score = d.healthScore || 0;
       const ARC_LEN = 251.3; // π × r (r=80, semicircle)
-      const offset  = ARC_LEN - (ARC_LEN * score / 100);
-      const arcColors = { healthy:'#00e5a0', warning:'#ffd166', 'at-risk':'#fb923c', critical:'#ff4d6d' };
-      const arcColor  = arcColors[d.healthStatus] || '#3b9eff';
+      const offset = ARC_LEN - (ARC_LEN * score / 100);
+      const arcColors = { healthy: '#00e5a0', warning: '#ffd166', 'at-risk': '#fb923c', critical: '#ff4d6d' };
+      const arcColor = arcColors[d.healthStatus] || '#3b9eff';
 
-      const arc   = document.getElementById('health-arc');
+      const arc = document.getElementById('health-arc');
       const arcTx = document.getElementById('health-arc-score');
-      if (arc)   { arc.setAttribute('stroke-dashoffset', offset.toFixed(1)); arc.setAttribute('stroke', arcColor); }
+      if (arc) { arc.setAttribute('stroke-dashoffset', offset.toFixed(1)); arc.setAttribute('stroke', arcColor); }
       if (arcTx) { arcTx.textContent = score; arcTx.setAttribute('fill', arcColor); }
 
       // Big score label
       const scoreLbl = document.getElementById('health-score-label');
       const statusLbl = document.getElementById('health-status-label');
-      const statusLabels = { healthy:'Healthy', warning:'Warning', 'at-risk':'At Risk', critical:'Critical' };
+      const statusLabels = { healthy: 'Healthy', warning: 'Warning', 'at-risk': 'At Risk', critical: 'Critical' };
       if (scoreLbl) { scoreLbl.textContent = score; scoreLbl.style.color = arcColor; }
       if (statusLbl) { statusLbl.textContent = statusLabels[d.healthStatus] || '—'; statusLbl.style.color = arcColor; }
 
       // Crash risk badge
-      const badge2  = document.getElementById('crash-risk-badge');
+      const badge2 = document.getElementById('crash-risk-badge');
       const riskTxt = document.getElementById('crash-risk-text');
       if (badge2 && d.crashRisk) {
         badge2.className = 'crash-risk-badge ' + (d.crashRisk || 'low').toLowerCase();
@@ -2176,7 +2309,7 @@ set SQL_DB=master</code>
       setW('sql-free-bar', Math.min(freePct, 100));
 
       // Extra stats
-      setEl('sql-compil',    d.compilationsPerSec.toFixed(1) + '/s');
+      setEl('sql-compil', d.compilationsPerSec.toFixed(1) + '/s');
       setEl('sql-lockwaits', d.lockWaitsPerSec.toFixed(1) + '/s');
       const dlColor = d.deadlocksPerSec > 0 ? '#ff4d6d' : '#00e5a0';
       const dlEl = document.getElementById('sql-deadlocks');
@@ -2184,12 +2317,12 @@ set SQL_DB=master</code>
 
       // ── Risk Analysis panel ────────────────────────────────────────────────
       const headroom = Math.max(0, d.targetCommittedMB - d.currentCommittedMB);
-      setEl('sql-headroom-mb',     headroom.toLocaleString() + ' MB');
-      setEl('sql-free-os-gb',      availGB + ' GB');
+      setEl('sql-headroom-mb', headroom.toLocaleString() + ' MB');
+      setEl('sql-free-os-gb', availGB + ' GB');
       const csBig = document.getElementById('sql-cache-status-big');
       if (csBig) {
-        csBig.textContent  = d.cacheHitRatio.toFixed(2) + '%';
-        csBig.style.color  = cacheColor;
+        csBig.textContent = d.cacheHitRatio.toFixed(2) + '%';
+        csBig.style.color = cacheColor;
       }
 
       // Risk factors list
@@ -2203,7 +2336,7 @@ set SQL_DB=master</code>
 
     // helpers used by renderSQL
     function setEl(id, txt) { const e = document.getElementById(id); if (e) e.textContent = txt; }
-    function setW(id, pct)  { const e = document.getElementById(id); if (e) e.style.width = pct + '%'; }
+    function setW(id, pct) { const e = document.getElementById(id); if (e) e.style.width = pct + '%'; }
 
 
     async function fetchSQLDashboard() {
