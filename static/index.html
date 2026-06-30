@@ -971,6 +971,108 @@
       color: var(--accent-cyan);
       line-height: 1.6;
     }
+
+    /* ═════════════════════════════════════════════
+       HEALTH GAUGE + RISK PANEL
+    ═════════════════════════════════════════════ */
+    .grid-sql-health {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 800px) { .grid-sql-health { grid-template-columns: 1fr; } }
+
+    /* second KPI row — 4 columns */
+    .grid-sql-kpi2 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 1100px) { .grid-sql-kpi2 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px)  { .grid-sql-kpi2 { grid-template-columns: repeat(2, 1fr); } }
+
+    /* health gauge SVG */
+    .health-gauge-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0 0;
+    }
+    .health-score-big {
+      font-family: var(--font-mono);
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1;
+      transition: color 0.6s;
+    }
+    .health-status-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .crash-risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .crash-risk-badge.low      { background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.3); color:var(--accent-green); }
+    .crash-risk-badge.medium   { background:rgba(255,209,102,0.1); border:1px solid rgba(255,209,102,0.3); color:var(--accent-yellow); }
+    .crash-risk-badge.high     { background:rgba(251,146,60,0.1); border:1px solid rgba(251,146,60,0.3); color:var(--accent-orange); }
+    .crash-risk-badge.critical { background:rgba(255,77,109,0.1); border:1px solid rgba(255,77,109,0.3); color:var(--accent-red); }
+
+    /* risk factors list */
+    .risk-factors-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .risk-factor-item {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      padding: 7px 10px;
+      background: rgba(59, 158, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      line-height: 1.4;
+    }
+    /* capacity bar for SQL vs system RAM */
+    .cap-bar-wrap { margin: 10px 0 6px; }
+    .cap-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .cap-bar {
+      height: 6px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .cap-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.7s cubic-bezier(0.34,1.56,0.64,1);
+    }
   </style>
 </head>
 
@@ -1268,6 +1370,41 @@ set SQL_DB=master</code>
 
       </div><!-- /grid-sql-kpi -->
 
+      <!-- Second KPI row: system-level metrics -->
+      <div class="grid-sql-kpi grid-sql-kpi2" style="margin-bottom:12px">
+
+        <!-- Total Physical RAM -->
+        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#64748b,#94a3b8);--kpi-color:#94a3b8;--kpi-glow:148,163,184">
+          <div class="sql-kpi-label">💾 Total RAM</div>
+          <div class="sql-kpi-value" id="sql-total-ram">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-total-ram-sub">— GB system</div>
+        </div>
+
+        <!-- Available RAM -->
+        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#00e5a0,#00b377);--kpi-color:#00e5a0;--kpi-glow:0,229,160">
+          <div class="sql-kpi-label">🟢 Available RAM</div>
+          <div class="sql-kpi-value" id="sql-avail-ram">—<span class="sql-kpi-unit">MB</span></div>
+          <div class="sql-kpi-sub" id="sql-avail-ram-sub">—% free</div>
+          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-avail-gauge" style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div></div>
+        </div>
+
+        <!-- Cache Hit Ratio -->
+        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#3b9eff,#a78bfa);--kpi-color:#3b9eff;--kpi-glow:59,158,255">
+          <div class="sql-kpi-label">🎯 Cache Hit</div>
+          <div class="sql-kpi-value" id="sql-cache-hit">—<span class="sql-kpi-unit">%</span></div>
+          <div class="sql-kpi-sub" id="sql-cache-hit-sub">buffer pool efficiency</div>
+          <div class="sql-kpi-gauge"><div class="sql-kpi-gauge-fill" id="sql-cache-gauge" style="width:0%;background:linear-gradient(90deg,#3b9eff,#a78bfa)"></div></div>
+        </div>
+
+        <!-- Lazy Writes/s -->
+        <div class="sql-kpi" style="--kpi-accent:linear-gradient(90deg,#ff4d6d,#c8002a);--kpi-color:#ff4d6d;--kpi-glow:255,77,109">
+          <div class="sql-kpi-label">💧 Lazy Writes/s</div>
+          <div class="sql-kpi-value" id="sql-lazy">—<span class="sql-kpi-unit">/s</span></div>
+          <div class="sql-kpi-sub" id="sql-lazy-sub">0 = no memory pressure</div>
+        </div>
+
+      </div><!-- /grid-sql-kpi2 -->
+
       <!-- Detail row: memory breakdown + PLE trend -->
       <div class="grid-sql-detail">
 
@@ -1369,6 +1506,106 @@ set SQL_DB=master</code>
         </div>
 
       </div><!-- /grid-sql-detail -->
+
+      <!-- Health score + Risk panel -->
+      <div class="grid-sql-health">
+
+        <!-- Health Score gauge -->
+        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#00e5a0,#3b9eff)">
+          <div class="section-title">🏥 Server Health Score</div>
+          <div class="health-gauge-wrap">
+
+            <!-- SVG arc gauge: semicircle, 0=left 100=right -->
+            <svg viewBox="0 0 200 110" width="200" height="110" style="overflow:visible">
+              <!-- track -->
+              <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
+              <!-- fill arc -->
+              <path id="health-arc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
+                stroke="#00e5a0" stroke-width="14" stroke-linecap="round"
+                stroke-dasharray="251.3" stroke-dashoffset="0"
+                style="transition: stroke-dashoffset 0.9s cubic-bezier(0.34,1.1,0.64,1), stroke 0.6s"/>
+              <!-- score text -->
+              <text id="health-arc-score" x="100" y="88" text-anchor="middle"
+                font-size="34" font-weight="700" fill="#e2eaf7"
+                font-family="'JetBrains Mono',monospace">—</text>
+              <text x="100" y="104" text-anchor="middle" font-size="8.5"
+                font-weight="600" letter-spacing="1" fill="#3d5070">HEALTH SCORE</text>
+            </svg>
+
+            <div class="health-score-big" id="health-score-label" style="color:var(--accent-green)">—</div>
+            <div class="health-status-label" id="health-status-label" style="color:var(--text-muted)">Checking...</div>
+            <div class="crash-risk-badge low" id="crash-risk-badge">
+              <span>⚡</span><span>Crash Risk: </span><span id="crash-risk-text">—</span>
+            </div>
+          </div>
+
+          <!-- System RAM capacity bars -->
+          <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
+            <div class="cap-bar-wrap">
+              <div class="cap-bar-label">
+                <span>SQL vs System RAM</span>
+                <span id="sql-sys-pct-label">—%</span>
+              </div>
+              <div class="cap-bar">
+                <div class="cap-bar-fill" id="sql-sys-bar"
+                  style="width:0%;background:linear-gradient(90deg,#3b9eff,#00d4ff)"></div>
+              </div>
+            </div>
+            <div class="cap-bar-wrap">
+              <div class="cap-bar-label">
+                <span>Free System RAM</span>
+                <span id="sql-free-pct-label">—%</span>
+              </div>
+              <div class="cap-bar">
+                <div class="cap-bar-fill" id="sql-free-bar"
+                  style="width:0%;background:linear-gradient(90deg,#00e5a0,#00b377)"></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap">
+              <div style="font-size:0.65rem;color:var(--text-muted)">Compilations/s
+                <span style="font-family:var(--font-mono);color:var(--text-primary);font-size:0.75rem;display:block" id="sql-compil">—</span>
+              </div>
+              <div style="font-size:0.65rem;color:var(--text-muted)">Lock Waits/s
+                <span style="font-family:var(--font-mono);color:var(--text-primary);font-size:0.75rem;display:block" id="sql-lockwaits">—</span>
+              </div>
+              <div style="font-size:0.65rem;color:var(--text-muted)">Deadlocks/s
+                <span style="font-family:var(--font-mono);color:var(--accent-red);font-size:0.75rem;display:block" id="sql-deadlocks">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Factors -->
+        <div class="card fade-in" style="--card-accent:linear-gradient(90deg,#ff4d6d,#ffd166)">
+          <div class="section-title">⚠️ Risk Analysis</div>
+
+          <!-- Max-before-crash estimate -->
+          <div style="background:rgba(255,77,109,0.06);border:1px solid rgba(255,77,109,0.15);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px">
+            <div style="font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:6px">📊 Memory Headroom</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <div>
+                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--accent-orange)" id="sql-headroom-mb">—</div>
+                <div style="font-size:0.62rem;color:var(--text-muted)">MB until target limit</div>
+              </div>
+              <div>
+                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700;color:var(--accent-cyan)" id="sql-free-os-gb">—</div>
+                <div style="font-size:0.62rem;color:var(--text-muted)">GB OS free RAM</div>
+              </div>
+              <div>
+                <div style="font-family:var(--font-mono);font-size:1.1rem;font-weight:700" id="sql-cache-status-big" style="color:var(--accent-green)">—</div>
+                <div style="font-size:0.62rem;color:var(--text-muted)">cache hit ratio</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk factors list -->
+          <div style="font-size:0.68rem;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">Active Risk Factors</div>
+          <ul class="risk-factors-list" id="sql-risk-list">
+            <li class="risk-factor-item">⏳ Waiting for data...</li>
+          </ul>
+        </div>
+
+      </div><!-- /grid-sql-health -->
 
     </div><!-- /sql-panel -->
 
@@ -1880,7 +2117,94 @@ set SQL_DB=master</code>
       if (!sparks.ple.canvas) initSQLSparks();
       pushSpark(sparks.ple.data, d.pageLifeExpectancy);
       drawSparkline(sparks.ple.canvas, sparks.ple.data, pleColors[st], pleColors[st]);
+
+      // ── Second KPI row ─────────────────────────────────────────────────────
+      const totalGB = (d.totalPhysicalMB / 1024).toFixed(1);
+      const availGB = (d.availablePhysicalMB / 1024).toFixed(1);
+      setText('sql-total-ram',    d.totalPhysicalMB.toLocaleString());
+      setText('sql-total-ram-sub', `${totalGB} GB system RAM`);
+
+      setText('sql-avail-ram',    d.availablePhysicalMB.toLocaleString());
+      const freePct = d.totalPhysicalMB > 0
+        ? ((d.availablePhysicalMB / d.totalPhysicalMB) * 100).toFixed(1) : 0;
+      setText('sql-avail-ram-sub', `${freePct}% of system free`);
+      document.getElementById('sql-avail-gauge').style.width = Math.min(freePct, 100) + '%';
+
+      const cacheColor = d.cacheHitRatio >= 99 ? '#00e5a0' : d.cacheHitRatio >= 95 ? '#ffd166' : '#ff4d6d';
+      const cacheEl = document.getElementById('sql-cache-hit');
+      if (cacheEl) { cacheEl.childNodes[0].textContent = d.cacheHitRatio.toFixed(2); cacheEl.style.color = cacheColor; }
+      setText('sql-cache-hit-sub', d.cacheHitRatio >= 99 ? '✅ Excellent' : d.cacheHitRatio >= 95 ? '⚡ Degraded' : '🔴 Critical');
+      document.getElementById('sql-cache-gauge').style.width = Math.min(d.cacheHitRatio, 100) + '%';
+
+      const lazyColor = d.lazyWritesPerSec > 20 ? '#ff4d6d' : d.lazyWritesPerSec > 5 ? '#ffd166' : '#00e5a0';
+      const lazyEl = document.getElementById('sql-lazy');
+      if (lazyEl) { lazyEl.childNodes[0].textContent = d.lazyWritesPerSec.toFixed(1); lazyEl.style.color = lazyColor; }
+      setText('sql-lazy-sub', d.lazyWritesPerSec > 20 ? '⚠️ Memory pressure!' : d.lazyWritesPerSec > 0 ? '⚡ Low pressure' : '✅ No pressure');
+
+      // ── Health Score Arc Gauge ─────────────────────────────────────────────
+      const score = d.healthScore || 0;
+      const ARC_LEN = 251.3; // π × r (r=80, semicircle)
+      const offset  = ARC_LEN - (ARC_LEN * score / 100);
+      const arcColors = { healthy:'#00e5a0', warning:'#ffd166', 'at-risk':'#fb923c', critical:'#ff4d6d' };
+      const arcColor  = arcColors[d.healthStatus] || '#3b9eff';
+
+      const arc   = document.getElementById('health-arc');
+      const arcTx = document.getElementById('health-arc-score');
+      if (arc)   { arc.setAttribute('stroke-dashoffset', offset.toFixed(1)); arc.setAttribute('stroke', arcColor); }
+      if (arcTx) { arcTx.textContent = score; arcTx.setAttribute('fill', arcColor); }
+
+      // Big score label
+      const scoreLbl = document.getElementById('health-score-label');
+      const statusLbl = document.getElementById('health-status-label');
+      const statusLabels = { healthy:'Healthy', warning:'Warning', 'at-risk':'At Risk', critical:'Critical' };
+      if (scoreLbl) { scoreLbl.textContent = score; scoreLbl.style.color = arcColor; }
+      if (statusLbl) { statusLbl.textContent = statusLabels[d.healthStatus] || '—'; statusLbl.style.color = arcColor; }
+
+      // Crash risk badge
+      const badge2  = document.getElementById('crash-risk-badge');
+      const riskTxt = document.getElementById('crash-risk-text');
+      if (badge2 && d.crashRisk) {
+        badge2.className = 'crash-risk-badge ' + (d.crashRisk || 'low').toLowerCase();
+        if (riskTxt) riskTxt.textContent = d.crashRisk;
+      }
+
+      // Capacity bars
+      const sysPct = d.sqlSystemPct || 0;
+      setEl('sql-sys-pct-label', sysPct.toFixed(1) + '%');
+      setW('sql-sys-bar', Math.min(sysPct, 100));
+      setEl('sql-free-pct-label', freePct + '%');
+      setW('sql-free-bar', Math.min(freePct, 100));
+
+      // Extra stats
+      setEl('sql-compil',    d.compilationsPerSec.toFixed(1) + '/s');
+      setEl('sql-lockwaits', d.lockWaitsPerSec.toFixed(1) + '/s');
+      const dlColor = d.deadlocksPerSec > 0 ? '#ff4d6d' : '#00e5a0';
+      const dlEl = document.getElementById('sql-deadlocks');
+      if (dlEl) { dlEl.textContent = d.deadlocksPerSec.toFixed(1) + '/s'; dlEl.style.color = dlColor; }
+
+      // ── Risk Analysis panel ────────────────────────────────────────────────
+      const headroom = Math.max(0, d.targetCommittedMB - d.currentCommittedMB);
+      setEl('sql-headroom-mb',     headroom.toLocaleString() + ' MB');
+      setEl('sql-free-os-gb',      availGB + ' GB');
+      const csBig = document.getElementById('sql-cache-status-big');
+      if (csBig) {
+        csBig.textContent  = d.cacheHitRatio.toFixed(2) + '%';
+        csBig.style.color  = cacheColor;
+      }
+
+      // Risk factors list
+      const riskList = document.getElementById('sql-risk-list');
+      if (riskList && d.riskFactors && d.riskFactors.length) {
+        riskList.innerHTML = d.riskFactors
+          .map(f => `<li class="risk-factor-item">${f}</li>`)
+          .join('');
+      }
     }
+
+    // helpers used by renderSQL
+    function setEl(id, txt) { const e = document.getElementById(id); if (e) e.textContent = txt; }
+    function setW(id, pct)  { const e = document.getElementById(id); if (e) e.style.width = pct + '%'; }
+
 
     async function fetchSQLDashboard() {
       try {
